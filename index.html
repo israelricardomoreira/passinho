@@ -217,6 +217,13 @@ nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:10; background:rgba(
 .witem small{font-size:.76rem; color:var(--muted); font-weight:700}
 .buybar{position:sticky; bottom:calc(-20px - env(safe-area-inset-bottom)); background:var(--bg); padding:10px 0 4px; margin-top:8px}
 
+.guide{display:flex; align-items:center; gap:10px; background:linear-gradient(180deg, var(--sun-soft), #fff); border-radius:var(--r); padding:10px; margin:8px 0}
+.guide canvas{image-rendering:pixelated; flex:none; width:62%; height:auto}
+.guide-leg{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-weight:700; font-size:.9rem}
+.guide-leg li{display:flex; align-items:center; gap:8px; min-height:32px; cursor:pointer; opacity:.8}
+.guide-leg li.on{opacity:1; text-decoration:underline; text-decoration-thickness:2px}
+.guide-leg i{width:22px; height:22px; display:grid; place-items:center; color:#fff; font-style:normal; font-family:var(--pixel); font-size:.75rem; flex:none}
+.guide-tip{min-height:2.6em}
 .chart{width:100%; height:auto}
 .chart text{font-size:10px; fill:var(--muted); font-family:var(--font); font-weight:700}
 .empty{color:var(--muted); text-align:center; padding:12px 0}
@@ -813,6 +820,62 @@ function drawNecklace(cv, broken){
   [[10, 9], [27, 9], [19, 10]].forEach(([x, y]) => P(x, y, '#FFFFFF'));
 }
 
+/* ===================================================================== guia de medidas (pixel art) */
+// [chave, y na grade do boneco, x inicial, x final, cor, dica]
+const GUIA = [
+  ['braco', 25, 8, 11, '#2E7D4F', 'Braço: no meio, entre o ombro e o cotovelo, braço relaxado.'],
+  ['cintura', 29, 10, 21, '#8B3A62', 'Cintura: na parte mais fina, um pouco acima do umbigo.'],
+  ['abdomen', 31, 10, 21, '#B6452C', 'Abdômen: na altura do umbigo, barriga relaxada.'],
+  ['quadril', 34, 9, 22, '#4B4FA8', 'Quadril: na parte mais larga do bumbum, pés juntos.'],
+  ['coxa', 38, 9, 15, '#B8862B', 'Coxa: no meio da coxa, entre o quadril e o joelho.']
+];
+const DICA_PESO = 'Peso: de manhã, depois do banheiro e antes de comer, sempre na mesma balança.';
+const DIG = {1:['.#.','##.','.#.','.#.','###'], 2:['##.','..#','.#.','#..','###'], 3:['##.','..#','.#.','..#','##.'], 4:['#.#','#.#','###','..#','..#'], 5:['###','#..','##.','..#','##.']};
+function drawGuide(cv, look, wear, focus, keys){
+  if (!cv) return;
+  const k = 6, W = 52, H = 48; cv.width = W * k; cv.height = H * k;
+  const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height);
+  blitAv(ctx, composeAvatar(look, wear, false), 2, 0, k);
+  const P = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * k, y * k, k, k); };
+  GUIA.forEach((g, i) => {
+    const [key, y, x0, x1, cor] = g, on = !focus || focus === key || focus === 'peso';
+    if (keys && keys.indexOf(key) < 0) return;
+    ctx.globalAlpha = on ? 1 : .28;
+    const yy = Math.min(y, 46);
+    // fita métrica: cor e branco alternados sobre o corpo, risco até a etiqueta
+    for (let x = x0 + 2; x <= x1 + 2; x++) P(x, yy, (x % 2) ? cor : '#FFFFFF');
+    const ey = 4 + i * 9, ex = 40;
+    // perna da etiqueta: sobe/desce até a altura do número
+    for (let x = x1 + 3; x < ex - 3; x++) if (x % 2 === 0) P(x, yy, cor);
+    const mx = ex - 3; const [a, b] = yy < ey + 2 ? [yy, ey + 2] : [ey + 2, yy];
+    for (let y2 = a; y2 <= b; y2++) P(mx, y2, cor);
+    P(mx + 1, ey + 2, cor); P(mx + 2, ey + 2, cor);
+    // etiqueta com número em pixel
+    for (let dx = 0; dx < 7; dx++) for (let dy = 0; dy < 7; dy++) P(ex + dx, ey - 1 + dy, cor);
+    DIG[i + 1].forEach((row, dy) => row.split('').forEach((ch, dx) => { if (ch === '#') P(ex + 2 + dx, ey + dy, '#FFFFFF'); }));
+    if (focus === key){ P(x0 + 1, yy, '#FFFFFF'); P(x1 + 3, yy, '#FFFFFF'); }
+  });
+  ctx.globalAlpha = 1;
+}
+function guideHTML(id, keys){
+  const items = GUIA.map((g, i) => [g, i]).filter(([g]) => !keys || keys.indexOf(g[0]) >= 0);
+  return `<div class="guide"><canvas id="${id}" role="img" aria-label="Boneco mostrando onde medir"></canvas>
+    <ol class="guide-leg">${items.map(([g, i]) => `<li data-gk="${g[0]}"><i style="background:${g[4]}">${i + 1}</i>${(MEDIDAS.find(m => m[0] === g[0]) || [0, g[0]])[1]}</li>`).join('')}</ol></div>
+    <p class="help guide-tip" id="${id}Tip">Toque num campo para ver onde medir.</p>`;
+}
+function bindGuide(id, look, wear, prefix, keys){
+  const cv = $('#' + id); if (!cv) return;
+  drawGuide(cv, look, wear, null, keys);
+  const set = key => {
+    drawGuide(cv, look, wear, key, keys);
+    const g = GUIA.find(x => x[0] === key);
+    $('#' + id + 'Tip').textContent = key === 'peso' ? DICA_PESO : g ? g[5] : 'Toque num campo para ver onde medir.';
+    $$('.guide-leg li').forEach(li => li.classList.toggle('on', li.dataset.gk === key));
+  };
+  $$('input[id^="' + prefix + '"]').forEach(inp => inp.addEventListener('focus', () => set(inp.dataset.gk)));
+  $$('.guide-leg li').forEach(li => li.addEventListener('click', () => { const inp = $$('input[id^="' + prefix + '"]').find(x => x.dataset.gk === li.dataset.gk); if (inp) inp.focus(); else set(li.dataset.gk); }));
+}
+
 /* ===================================================================== quarto */
 const RW = 128, RH = 96;
 function roomScale(cv){ const w = cv.parentElement.clientWidth || 340; return Math.max(2, Math.floor(w * (window.devicePixelRatio || 1) / RW)); }
@@ -945,10 +1008,11 @@ function obHTML(){
       <div class="grid2" style="margin-top:6px">
         <div><label class="f" for="obIdade">Idade</label><input class="in" id="obIdade" inputmode="numeric" value="${esc(d.idade)}" placeholder="anos"></div>
         <div><label class="f" for="obAltura">Altura (cm)</label><input class="in" id="obAltura" inputmode="numeric" value="${esc(d.altura)}" placeholder="ex.: 160"></div>
-        <div><label class="f" for="obPeso">Peso (kg)</label><input class="in" id="obPeso" inputmode="decimal" value="${esc(d.peso)}" placeholder="ex.: 62,5"></div>
-        <div><label class="f" for="obCintura">Cintura (cm)</label><input class="in" id="obCintura" inputmode="decimal" value="${esc(d.cintura)}" placeholder="opcional"></div>
-        <div><label class="f" for="obQuadril">Quadril (cm)</label><input class="in" id="obQuadril" inputmode="decimal" value="${esc(d.quadril)}" placeholder="opcional"></div>
+        <div><label class="f" for="obPeso">Peso (kg)</label><input class="in" id="obPeso" data-gk="peso" inputmode="decimal" value="${esc(d.peso)}" placeholder="ex.: 62,5"></div>
+        <div><label class="f" for="obCintura">Cintura (cm)</label><input class="in" id="obCintura" data-gk="cintura" inputmode="decimal" value="${esc(d.cintura)}" placeholder="opcional"></div>
+        <div><label class="f" for="obQuadril">Quadril (cm)</label><input class="in" id="obQuadril" data-gk="quadril" inputmode="decimal" value="${esc(d.quadril)}" placeholder="opcional"></div>
       </div>
+      ${guideHTML('obGuide', ['cintura','quadril'])}
       <p class="f">Hoje você se mexe...</p><div class="opt">${ATIV.map(a => `<button class="${d.ativ === a[0] ? 'on' : ''}" data-a="obAtiv" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>
       <p class="f">Seu objetivo</p><div class="opt">${RITMO.map(a => `<button class="${d.ritmo === a[0] ? 'on' : ''}" data-a="obRitmo" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>`;
     foot = `<button class="btn ghost" data-a="obBack">Voltar</button><button class="btn grow" data-a="obNext">Continuar</button>`;
@@ -975,6 +1039,7 @@ function obAfter(){
   const d = ob.data;
   if (ob.step === 0) drawBust($('#obBust'), d.look, S.wear);
   if (ob.step === 2) drawFull($('#obAv'), d.look, S.wear, 8);
+  if (ob.step === 1) bindGuide('obGuide', d.look, S.wear, 'ob', ['cintura','quadril']);
 }
 function lookEditorHTML(look, ctx){
   return `<p class="f">Pele</p><div class="chips">${PELES.map(c => `<button class="swatch ${look.pele === c ? 'on' : ''}" style="background:${c}" data-a="look" data-ctx="${ctx}" data-k="pele" data-v="${c}" aria-label="Tom de pele" aria-pressed="${look.pele === c}"></button>`).join('')}</div>
@@ -1155,7 +1220,7 @@ function corpoHTML(){
     <p class="help">${p.kcalManual ? 'Meta definida por você.' : 'Estimativa pela fórmula de Mifflin-St Jeor. Atualiza quando você anota peso novo ou treina mais.'}</p></section>`;
   h += `<section class="card"><div class="card-h"><h2>Medidas</h2><button class="btn" style="min-height:44px" data-a="addMeasure">${ic('plus')} Medir</button></div>`;
   const ms = S.measures.slice().sort((a, b) => a.d < b.d ? -1 : 1);
-  if (!ms.length) return h + `<p class="muted">Anote peso e medidas quando quiser. De 15 em 15 dias é um bom ritmo.</p></section>`;
+  if (!ms.length) return h + `<p class="muted">Anote peso e medidas quando quiser. De 15 em 15 dias é um bom ritmo. Na hora de medir, o bonequinho mostra onde passar a fita.</p></section>`;
   const avail = MEDIDAS.filter(m => ms.some(x => x[m[0]] != null));
   if (avail.length && !avail.some(m => m[0] === corpoMetric)) corpoMetric = avail[0][0];
   h += `<div class="chips" role="group" aria-label="Medida no gráfico">${avail.map(m => `<button class="chip ${corpoMetric === m[0] ? 'on' : ''}" data-a="metric" data-m="${m[0]}" aria-pressed="${corpoMetric === m[0]}">${m[1]}</button>`).join('')}</div>`;
@@ -1365,11 +1430,12 @@ function openAddEx(){
 }
 function openMeasure(id){
   const x = id ? S.measures.find(m => m.id === id) : null;
-  openSheet(x ? 'Editar medidas' : 'Novas medidas', `<label class="f" for="mD">Data</label><input class="in" type="date" id="mD" value="${x ? x.d : today()}" max="${today()}">
-    <div class="grid2">${MEDIDAS.map(m => `<div><label class="f" for="m_${m[0]}">${m[1]} (${m[2]})</label><input class="in" id="m_${m[0]}" inputmode="decimal" value="${x && x[m[0]] != null ? nf2.format(x[m[0]]) : ''}"></div>`).join('')}</div>
+  openSheet(x ? 'Editar medidas' : 'Novas medidas', `${guideHTML('mGuide')}<label class="f" for="mD">Data</label><input class="in" type="date" id="mD" value="${x ? x.d : today()}" max="${today()}">
+    <div class="grid2">${MEDIDAS.map(m => `<div><label class="f" for="m_${m[0]}">${m[1]} (${m[2]})</label><input class="in" id="m_${m[0]}" data-gk="${m[0]}" inputmode="decimal" value="${x && x[m[0]] != null ? nf2.format(x[m[0]]) : ''}"></div>`).join('')}</div>
     <p class="help">Preencha só o que mediu. Fita sempre no mesmo lugar, de manhã, ajuda a comparar.</p>
     <button class="btn full" style="margin-top:16px" data-a="saveMeasure" data-id="${id || ''}">Salvar</button>
     ${x ? `<button class="btn danger full" style="margin-top:8px" data-a="delMeasure" data-id="${id}">Apagar</button>` : ''}`);
+  bindGuide('mGuide', S.look, S.wear, 'm_');
 }
 let profDraft = null;
 function openProfile(){
@@ -1603,7 +1669,7 @@ if (S.onboarded){ settle(); pendingCoins.length = 0; save(); }
 if (!localStorage.getItem(KEY)) idbLoad().then(txt => { if (txt){ try { S = JSON.parse(txt); migrate(); rebuildFoods(); save(); render(); } catch(e){} } });
 render();
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('sw.js').catch(() => {});
-window.__passinho = {get S(){ return S; }, render, settle, afterChange, F:() => F, kcalOf, gramsPer, drawFull, drawNecklace};
+window.__passinho = {get S(){ return S; }, render, settle, afterChange, F:() => F, kcalOf, gramsPer, drawFull, drawNecklace, drawGuide};
 })();
 </script>
 </body>
