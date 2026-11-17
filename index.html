@@ -394,7 +394,8 @@ const ROUPAS = [
   ['tenis_preto','shoes','tenis','#3A3438','Tênis preto',90],
   ['brinco','acc','brinco','#D4A537','Brinco de argola',70],
   ['pulseira','acc','pulseira','#D4A537','Pulseira dourada',60],
-  ['tiara','acc','tiara','#E8A0B4','Tiara',60]
+  ['tiara','acc','tiara','#E8A0B4','Tiara',60],
+  ['short_acad','bottom','ciclista','#5A5FC0','Short de academia',90]
 ];
 const LOJA_QUARTO = [['gato','Gatinho',150],['girassol','Vaso de girassol',90],['quadro_praia','Quadro de praia',100]];
 const PELES = ['#F6D7C3','#EBC0A0','#D9A27E','#C88B62','#A96F4B','#8A5A3B','#6B4128','#4E2E1C'];
@@ -738,6 +739,7 @@ const FULLS = {
 const BOTTOMS = {
   calca:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','.........DDDDDDd','.........DDDDDd.','.........DDDDDd.','........DDDDDDd.','........DDDDDDd.','........DDDDDDd.','........DDDDDDd.','........ddddddd.']),
   skinny:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','..........DDDDd.','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........dddd..']),
+  ciclista:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','..........DDDDd.','..........DDDd..','..........dddd..']),
   short:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','..........dddd..']),
   saia:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','.........DDDDDDD','.........DDDDDDD','........dddddddd'])
 };
@@ -831,7 +833,9 @@ const GUIA = [
 ];
 const DICA_PESO = 'Peso: de manhã, depois do banheiro e antes de comer, sempre na mesma balança.';
 const DIG = {1:['.#.','##.','.#.','.#.','###'], 2:['##.','..#','.#.','#..','###'], 3:['##.','..#','.#.','..#','##.'], 4:['#.#','#.#','###','..#','..#'], 5:['###','#..','##.','..#','##.']};
+const GUIA_ROUPA = acc => ({top:'top_academia', bottom:'short_acad', full:null, shoes:'tenis_branco', acc:{colar_ana:!!(acc && acc.colar_ana)}});
 function drawGuide(cv, look, wear, focus, keys){
+  wear = GUIA_ROUPA(wear && wear.acc);
   if (!cv) return;
   const k = 6, W = 52, H = 48; cv.width = W * k; cv.height = H * k;
   const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height);
@@ -840,20 +844,22 @@ function drawGuide(cv, look, wear, focus, keys){
   GUIA.forEach((g, i) => {
     const [key, y, x0, x1, cor] = g, on = !focus || focus === key || focus === 'peso';
     if (keys && keys.indexOf(key) < 0) return;
-    ctx.globalAlpha = on ? 1 : .28;
+    const hot = focus === key || !focus;
+    ctx.globalAlpha = on ? 1 : .4;
     const yy = Math.min(y, 46);
-    // fita métrica: cor e branco alternados sobre o corpo, risco até a etiqueta
-    for (let x = x0 + 2; x <= x1 + 2; x++) P(x, yy, (x % 2) ? cor : '#FFFFFF');
+    // fita métrica com contorno escuro: bem visível sobre pele e roupa
+    if (hot){ ctx.fillStyle = '#2A1A16'; ctx.fillRect((x0 + 1) * k, yy * k - 3, (x1 - x0 + 3) * k, k + 6); }
+    for (let x = x0 + 1; x <= x1 + 3; x++) P(x, yy, (x % 2) ? cor : '#FFFFFF');
     const ey = 4 + i * 9, ex = 40;
-    // perna da etiqueta: sobe/desce até a altura do número
-    for (let x = x1 + 3; x < ex - 3; x++) if (x % 2 === 0) P(x, yy, cor);
+    // perna até a etiqueta (contínua)
+    for (let x = x1 + 4; x < ex - 3; x++) P(x, yy, cor);
     const mx = ex - 3; const [a, b] = yy < ey + 2 ? [yy, ey + 2] : [ey + 2, yy];
     for (let y2 = a; y2 <= b; y2++) P(mx, y2, cor);
     P(mx + 1, ey + 2, cor); P(mx + 2, ey + 2, cor);
     // etiqueta com número em pixel
     for (let dx = 0; dx < 7; dx++) for (let dy = 0; dy < 7; dy++) P(ex + dx, ey - 1 + dy, cor);
     DIG[i + 1].forEach((row, dy) => row.split('').forEach((ch, dx) => { if (ch === '#') P(ex + 2 + dx, ey + dy, '#FFFFFF'); }));
-    if (focus === key){ P(x0 + 1, yy, '#FFFFFF'); P(x1 + 3, yy, '#FFFFFF'); }
+
   });
   ctx.globalAlpha = 1;
 }
