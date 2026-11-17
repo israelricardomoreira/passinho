@@ -417,9 +417,6 @@ const ITENS = {
 const ORDEM_CAIXA = ['pampas','tapete','planta','quadro','luminaria','espelho','almofada','cortina','prateleira','relogio','chapeu','livros','pelucia','caneca'];
 const ORDEM_CAT = ['terco','vela','santa'];
 const CODIGOS = {"693946396": 50, "15524074": 50, "490890581": 50, "288947292": 50, "925802354": 50, "1339947394": 50, "3312421900": 50, "1241107220": 50, "2344365030": 50, "1136914874": 50, "1393062882": 50, "4268931977": 50, "1154095799": 50, "849257163": 50, "3777630317": 50, "3052221249": 50, "3798779322": 50, "907436957": 50, "3081338960": 50, "242754682": 50, "1984210210": 50, "3087928429": 50, "2719851624": 50, "787650351": 50, "3243206173": 50, "2757286997": 50, "1479636798": 50, "2510389321": 50, "3807059505": 50, "4161554562": 50};
-// Lembretes (notificações): chave pública. A privada fica só no GitHub (segredo).
-const VAPID_PUBLIC = 'BEP4FPXfmrRfctQtmTUqv6XX01ZDYMaxS-SFEsFOBDcIB-kexuE0VEuh7yo5wIo8_q8FARs2cXTa0dlsAxOrSk8';
-const LEMBRETE_HORAS = '8h, 12h30 e 19h30';
 
 /* ===================================================================== utilidades */
 const $ = s => document.querySelector(s);
@@ -1126,7 +1123,6 @@ function hojeHTML(){
     <button class="check ${gym ? 'on' : ''}" data-a="toggle" data-m="academia" aria-pressed="${gym}" aria-label="Fui à academia">${ic('check')}</button></div>`;
   if (boxReady()) h += `<section class="card box-cta"><canvas data-gift="closed" aria-hidden="true"></canvas><div class="grow"><h3>Sua caixinha do dia chegou</h3><p class="small muted">Moedas e uma surpresa.</p></div><button class="btn sun" data-a="openBox">Abrir</button></section>`;
   else if (!isActive(t)) h += `<section class="card box-cta"><canvas data-gift="closed" aria-hidden="true" style="opacity:.5"></canvas><p class="grow small muted">Faça uma missão qualquer e ganhe a caixinha do dia.</p></section>`;
-  if (pushState() === 'pronto' && !S.pushDismiss) h += `<section class="card box-cta"><div class="grow"><h3>Quer lembretes?</h3><p class="small muted">Um aviso às ${LEMBRETE_HORAS} para não esquecer do seu passinho.</p></div><div style="display:grid;gap:6px"><button class="btn" data-a="pushOn">Ativar</button><button class="link" data-a="pushNo">agora não</button></div></section>`;
   h += foodMiniHTML();
   h += mimoHTML();
   if (rec) h += `<section class="card"><div class="card-h"><h3>Sono de hoje</h3><button class="link" data-a="editSleep" data-k="${t}">editar</button></div><p><b>${fmtH(rec.h)}</b> <span class="muted">(${rec.b} até ${rec.w})</span></p></section>`;
@@ -1459,7 +1455,8 @@ function openSettings(){
   openSheet('Ajustes', `<label class="f" for="stN">Seu nome</label><input class="in" id="stN" value="${esc(S.name)}">
     <label class="f" for="stA">Meta de copos de água por dia</label><input class="in" id="stA" inputmode="numeric" value="${S.agua}">
     <button class="btn full" style="margin-top:12px" data-a="saveSettings">Salvar</button>
-    <h3 style="margin-top:22px">Lembretes</h3>${remindersHTML()}
+    <h3 style="margin-top:22px">Lembretes</h3>
+    <p class="small muted">Quer um empurrãozinho? No app <b>Lembretes</b> do iPhone, crie "Abrir o Passinho" com repetição diária no horário que preferir.</p>
     <h3 style="margin-top:22px">Backup</h3>
     <p class="small muted">Seu progresso fica guardado no celular. Faça um backup de vez em quando e mande para o WhatsApp.${S.lastBackup ? ' Último: ' + fmtD(S.lastBackup) + '.' : ''}</p>
     <div class="grid2" style="margin-top:8px"><button class="btn ghost" data-a="export">Salvar backup</button><button class="btn ghost" data-a="import">Restaurar</button></div>
@@ -1505,48 +1502,6 @@ function openWardrobe(){
   drawFull($('#wAv'), S.look, prevWear, 6);
   const sh = $('#sheet'); sh.scrollTop = sh._st || 0;
 }
-
-/* ===================================================================== lembretes */
-const isStandalone = () => !!(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches));
-const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-function pushState(){
-  if (!isStandalone()) return 'instalar';
-  if (!pushOk()) return 'sem';
-  if (Notification.permission === 'denied') return 'negado';
-  if (Notification.permission === 'granted' && S.pushCode) return 'ativo';
-  return 'pronto';
-}
-function b64u(s){ const p = '='.repeat((4 - s.length % 4) % 4); const b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); }
-async function activatePush(){
-  try {
-    const perm = await Notification.requestPermission();
-    if (perm !== 'granted'){ toast('Sem permissão, os lembretes não chegam'); openReminders(); return; }
-    const reg = await navigator.serviceWorker.ready;
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(VAPID_PUBLIC)});
-    S.pushCode = JSON.stringify(sub); save(); render();
-    reg.showNotification('Passinho', {body:'Lembretes ativados! Agora é só mandar o código.', icon:'icon-192.png'});
-    openReminders();
-  } catch(e){ toast('Não deu para ativar: ' + (e && e.message ? e.message : 'erro')); }
-}
-function remindersHTML(){
-  const st = pushState();
-  if (st === 'instalar') return `<p class="small muted">Os lembretes só funcionam com o Passinho instalado na tela de início: no Safari, Compartilhar > "Adicionar à Tela de Início". Depois abra pelo ícone e volte aqui.</p>`;
-  if (st === 'sem') return `<p class="small muted">Este aparelho não aceita notificações de app web. No iPhone, precisa do iOS 16.4 ou mais novo.</p>`;
-  if (st === 'negado') return `<p class="small muted">As notificações estão bloqueadas. Abra Ajustes do iPhone > Notificações > Passinho e ative "Permitir Notificações". Depois volte aqui.</p>`;
-  if (st === 'ativo') return `<p class="small"><span class="tag ok">ativos</span> Lembretes às ${LEMBRETE_HORAS}.</p>
-    <p class="small muted" style="margin-top:6px">Se ainda não mandou, envie o código para o ${esc(QUEM_DA_O_MIMO)}. É só uma vez.</p>
-    <div class="grid2" style="margin-top:8px"><button class="btn ghost" data-a="pushSend">Enviar código</button><button class="btn ghost" data-a="pushCopy">Copiar código</button></div>`;
-  return `<p class="small muted">Um empurrãozinho às ${LEMBRETE_HORAS}: anotar o sono, montar o prato, fazer um passinho.</p>
-    <button class="btn full" style="margin-top:8px" data-a="pushOn">Ativar lembretes</button>`;
-}
-function openReminders(){ openSheet('Lembretes', remindersHTML()); }
-async function pushShare(){
-  const txt = S.pushCode || '';
-  try { if (navigator.share){ await navigator.share({text:txt}); return; } } catch(e){ return; }
-  pushCopy();
-}
-async function pushCopy(){ try { await navigator.clipboard.writeText(S.pushCode || ''); toast('Código copiado. Cole no WhatsApp do ' + QUEM_DA_O_MIMO); } catch(e){ toast('Não deu para copiar'); } }
 
 /* ===================================================================== backup */
 function exportData(){
@@ -1703,10 +1658,6 @@ document.addEventListener('click', e => {
     // ajustes
     case 'saveSettings': { const n = $('#stN').value.trim(), ag = parseInt($('#stA').value, 10); if (n) S.name = n; if (ag > 0 && ag < 30) S.agua = ag; closeSheet(); afterChange(); toast('Salvo'); break; }
     case 'export': exportData(); break;
-    case 'pushOn': activatePush(); break;
-    case 'pushNo': S.pushDismiss = 1; save(); render(); toast('Dá para ativar depois em Ajustes'); break;
-    case 'pushSend': pushShare(); break;
-    case 'pushCopy': pushCopy(); break;
     case 'import': $('#fileIn').click(); break;
     case 'reset': if (!resetArm){ resetArm = true; b.textContent = 'Toque de novo para confirmar'; setTimeout(() => { resetArm = false; }, 4000); return; }
       S = defaultState(); ob = {step:0, data:null}; rebuildFoods(); save(); closeSheet(); tab = 'hoje'; render(); break;
