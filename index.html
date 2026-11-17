@@ -844,15 +844,12 @@ function drawGuide(cv, look, wear, focus, keys){
   GUIA.forEach((g, i) => {
     const [key, y, x0, x1, cor] = g, on = !focus || focus === key || focus === 'peso';
     if (keys && keys.indexOf(key) < 0) return;
-    const hot = focus === key || !focus;
-    ctx.globalAlpha = on ? 1 : .4;
+    ctx.globalAlpha = on ? 1 : .28;
     const yy = Math.min(y, 46);
-    // fita métrica com contorno escuro: bem visível sobre pele e roupa
-    if (hot){ ctx.fillStyle = '#2A1A16'; ctx.fillRect((x0 + 1) * k, yy * k - 3, (x1 - x0 + 3) * k, k + 6); }
-    for (let x = x0 + 1; x <= x1 + 3; x++) P(x, yy, (x % 2) ? cor : '#FFFFFF');
+    // fita métrica: cor e branco alternados sobre o corpo, risco até a etiqueta
+    for (let x = x0 + 2; x <= x1 + 2; x++) P(x, yy, (x % 2) ? cor : '#FFFFFF');
     const ey = 4 + i * 9, ex = 40;
-    // perna até a etiqueta (contínua)
-    for (let x = x1 + 4; x < ex - 3; x++) P(x, yy, cor);
+    for (let x = x1 + 3; x < ex - 3; x++) if (x % 2 === 0) P(x, yy, cor);
     const mx = ex - 3; const [a, b] = yy < ey + 2 ? [yy, ey + 2] : [ey + 2, yy];
     for (let y2 = a; y2 <= b; y2++) P(mx, y2, cor);
     P(mx + 1, ey + 2, cor); P(mx + 2, ey + 2, cor);

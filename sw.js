@@ -1,5 +1,5 @@
 // Passinho: funciona offline. Mude a versão quando atualizar o app.
-const VERSION = 'passinho-v5';
+const VERSION = 'passinho-v6';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
