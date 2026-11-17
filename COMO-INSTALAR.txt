@@ -1,0 +1,31 @@
+PASSINHO 2.0 - como publicar no GitHub Pages e instalar no iPhone dela
+
+1) PUBLICAR (uma vez só)
+   a. Em github.com, crie um repositório PÚBLICO chamado passinho.
+   b. Clique em "uploading an existing file" e arraste TODOS os arquivos desta pasta
+      (index.html, sw.js, manifest.webmanifest, os ícones e o .nojekyll). "Commit changes".
+   c. Settings > Pages > Source: "Deploy from a branch", Branch: main, pasta / (root). Salve.
+      Em 1 ou 2 minutos sai o endereço: https://SEU-USUARIO.github.io/passinho/
+
+2) INSTALAR NO IPHONE DELA (tem que ser pelo Safari)
+   Abra o endereço no Safari > botão Compartilhar (quadrado com seta para cima)
+   > "Adicionar à Tela de Início" > Adicionar.
+   Instalado assim, o iPhone guarda os dados do app de forma mais segura.
+
+3) ATUALIZAR DEPOIS
+   No repositório: "Add file" > "Upload files", arraste os arquivos novos por cima.
+   Ela recebe a versão nova quando abrir o app com internet. O progresso não se perde.
+
+4) PARA NÃO PERDER O PROGRESSO
+   Ajustes (engrenagem) > "Salvar backup" abre o compartilhar do iPhone:
+   dá para mandar o arquivo para o WhatsApp ou salvar em Arquivos.
+   Para restaurar: tela inicial "Já tenho um backup" ou Ajustes > Restaurar.
+
+5) CÓDIGOS DE MOEDAS
+   A lista de códigos fica no arquivo codigos-do-israel.txt, que NÃO vai para o GitHub.
+   Cada código vale 50 moedas e só funciona uma vez. Ela digita em Quarto > Tenho um código.
+
+6) MUDAR TEXTOS SEM MEXER NO RESTO
+   No index.html, logo no começo do <script>, ficam: quem dá o mimo, a meta do mês,
+   a lista de mimos, quanto vale cada coisa em moedas, as curiosidades,
+   os textos "Para o coração" e as roupas da loja com preço.

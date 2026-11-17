@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passinho</title>
+<meta name="theme-color" content="#FBF7F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Passinho">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF7F0; --surface:#FFFFFF; --ink:#2A2320; --muted:#6B5F57; --line:#EADFD3; --soft:#F4ECE1;
+  --primary:#8B3A62; --primary-ink:#FFFFFF; --primary-soft:#F6E7EE;
+  --sun:#F4D35E; --sun-soft:#FBF1C9;
+  --sleep:#4B4FA8; --sleep-soft:#E8E9F7;
+  --food:#2E7D4F; --food-soft:#E3F2E8;
+  --move:#B6452C; --move-soft:#FBE7E1;
+  --gold:#B8862B; --coin:#C9961F;
+  --r:18px;
+  --shadow:0 1px 2px rgba(60,40,30,.06), 0 4px 14px rgba(60,40,30,.06);
+  --font:'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --pixel:'Silkscreen', ui-monospace, monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.5}
+body{min-height:100dvh; padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+body.ob{padding-bottom:0}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--primary); outline-offset:2px; border-radius:8px}
+.wrap{max-width:560px; margin:0 auto; padding:0 16px}
+h1,h2,h3{margin:0; line-height:1.2}
+h1{font-size:1.6rem; font-weight:800}
+h2{font-size:1.15rem; font-weight:800}
+h3{font-size:1rem; font-weight:800}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+.pix{font-family:var(--pixel); letter-spacing:.02em}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+.center{text-align:center}
+
+.top{position:sticky; top:0; z-index:5; background:rgba(251,247,240,.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); padding-top:env(safe-area-inset-top)}
+.top-in{display:flex; align-items:center; gap:12px; padding:10px 0}
+.bust{width:48px; height:48px; border-radius:50%; background:var(--sun-soft); border:2px solid var(--sun); overflow:hidden; flex:none; display:grid; place-items:center}
+.bust canvas{image-rendering:pixelated; width:48px; height:48px}
+.hello{flex:1; min-width:0}
+.hello b{display:block; font-size:1.1rem; font-weight:800}
+.hello span{font-size:.85rem; color:var(--muted)}
+.icon-btn{width:44px; height:44px; border-radius:50%; border:0; background:transparent; display:grid; place-items:center; color:var(--ink); flex:none}
+.icon-btn:active{background:var(--soft)}
+svg.i{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:none}
+.stats{display:flex; gap:8px; padding:0 0 10px}
+.stat{display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-weight:800; font-size:.9rem; min-height:36px}
+.stat svg.i{width:18px; height:18px}
+.stat.coin{color:#7A5A0E; background:#FFF6D8; border-color:#F0DC9A}
+button.stat{cursor:pointer}
+
+.card{background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:16px; margin:12px 0}
+.card-h{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px}
+.sec-t{display:flex; align-items:baseline; justify-content:space-between; margin:20px 2px 4px}
+.sec-t p{font-size:.85rem; color:var(--muted)}
+
+.btn{min-height:48px; border-radius:14px; border:0; padding:0 18px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--primary); color:var(--primary-ink)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--soft); color:var(--ink)}
+.btn.line{background:transparent; border:1.5px solid var(--line); color:var(--ink)}
+.btn.sun{background:var(--sun); color:#3a2c00}
+.btn.full{width:100%}
+.btn.danger{background:#FCE8E6; color:#9B2C1F}
+.btn[disabled]{opacity:.5}
+.link{background:none; border:0; color:var(--primary); font-weight:800; padding:10px 6px; min-height:44px}
+.row{display:flex; gap:8px; align-items:center}
+.grow{flex:1; min-width:0}
+
+.mission{display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:var(--r); box-shadow:var(--shadow); padding:12px 12px 12px 14px; margin:10px 0; border-left:5px solid var(--c)}
+.mission .ico{width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:var(--cs); color:var(--c); flex:none}
+.mission .txt{flex:1; min-width:0}
+.mission .lbl{font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--c)}
+.mission .t{font-weight:700}
+.mission .swap{background:none; border:0; color:var(--muted); font-size:.82rem; font-weight:700; padding:4px 0; min-height:32px; display:inline-flex; gap:4px; align-items:center}
+.mission .swap svg.i{width:15px; height:15px}
+.check{width:48px; height:48px; border-radius:50%; border:2.5px solid var(--c); background:var(--surface); color:var(--c); display:grid; place-items:center; flex:none}
+.check svg.i{opacity:0; width:26px; height:26px; stroke-width:3}
+.check.on{background:var(--c); color:#fff}
+.check.on svg.i{opacity:1}
+.mission.done{background:linear-gradient(90deg, var(--cs), var(--surface) 70%)}
+.p-sono{--c:var(--sleep); --cs:var(--sleep-soft)}
+.p-comida{--c:var(--food); --cs:var(--food-soft)}
+.p-mov{--c:var(--move); --cs:var(--move-soft)}
+.p-bonus{--c:var(--primary); --cs:var(--primary-soft)}
+.counter{display:flex; align-items:center; gap:4px}
+.counter button{width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line); background:var(--surface); display:grid; place-items:center}
+.counter b{min-width:44px; text-align:center}
+.tag{display:inline-block; font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:999px; background:var(--primary-soft); color:var(--primary)}
+.tag.ok{background:var(--food-soft); color:var(--food)}
+.tag.off{background:var(--soft); color:var(--muted)}
+.tag.coin{background:#FFF6D8; color:#7A5A0E}
+
+.sleep-card{background:linear-gradient(160deg, #2E3170, #4B4FA8); color:#fff}
+.sleep-card .muted{color:#D9DAF5}
+.sleep-card select{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff}
+.sleep-card select option{color:#222}
+.sel{appearance:none; -webkit-appearance:none; min-height:48px; border-radius:12px; padding:0 14px; font-weight:800; font-size:1.05rem; width:100%}
+.q-row{display:flex; gap:8px; margin-top:12px}
+.q-row button{flex:1; min-height:44px; border-radius:12px; border:1.5px solid rgba(255,255,255,.35); background:transparent; color:#fff; font-weight:700}
+.q-row button.on{background:#fff; color:#2E3170; border-color:#fff}
+.bars{display:flex; gap:8px; align-items:flex-end; height:120px; margin-top:8px}
+.bar{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; border:0; background:none; padding:0}
+.bar i{display:block; width:100%; border-radius:8px 8px 4px 4px; background:var(--sleep); min-height:4px}
+.bar i.empty{background:var(--soft)}
+.bar small{font-size:.72rem; color:var(--muted); font-weight:700}
+.bar em{font-style:normal; font-size:.72rem; font-weight:800}
+
+.prog{height:14px; border-radius:999px; background:var(--soft); overflow:hidden}
+.prog i{display:block; height:100%; background:repeating-linear-gradient(90deg, var(--sun) 0 10px, #EAC23E 10px 12px); border-radius:999px; transition:width .5s}
+.prog.food i{background:var(--food)}
+.prog.over i{background:#D98A3D}
+.prog.thin{height:8px}
+.mimo{background:linear-gradient(160deg, var(--sun-soft), #fff)}
+.mimo.won{background:linear-gradient(160deg, #FFE9A8, #FFF8E0); border:2px dashed var(--gold)}
+
+.box-cta{display:flex; align-items:center; gap:14px}
+.box-cta canvas{image-rendering:pixelated; width:56px; height:56px; flex:none}
+.reveal{text-align:center; padding:8px 0}
+.reveal canvas{image-rendering:pixelated}
+.quote{font-size:1.1rem; font-weight:700; line-height:1.5; margin:12px 0}
+.sign{color:var(--primary); font-weight:800}
+
+.room{border-radius:var(--r); overflow:hidden; background:#E9DCCB; line-height:0}
+.room canvas{width:100%; image-rendering:pixelated; display:block}
+.cozy{font-size:.85rem; color:var(--food); font-weight:700; margin-top:8px; display:flex; gap:6px; align-items:flex-start}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch}
+.chip{min-height:40px; border-radius:999px; padding:0 14px; border:1.5px solid var(--line); background:var(--surface); font-weight:700; font-size:.92rem; white-space:nowrap}
+.chip.on{background:var(--primary); border-color:var(--primary); color:#fff}
+.swatch{width:44px; height:44px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 1.5px var(--line)}
+.swatch.on{box-shadow:0 0 0 3px var(--primary)}
+.list{list-style:none; margin:0; padding:0}
+.list li{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line)}
+.list li:last-child{border-bottom:0}
+.coll{border-left:4px solid var(--sun); padding:8px 12px; margin:8px 0; background:var(--soft); border-radius:0 12px 12px 0}
+.coll.cat{border-color:var(--primary)}
+
+.daynav{display:flex; align-items:center; justify-content:space-between; margin:8px 0}
+.slot-h{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.food-item{display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--line)}
+.food-item .q{font-weight:800; color:var(--food); white-space:nowrap}
+.add-row{display:flex; align-items:center; gap:6px; color:var(--food); font-weight:800; background:none; border:0; min-height:44px; padding:0}
+.roles{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px}
+.kpi{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+.kpi div{background:var(--soft); border-radius:12px; padding:8px 10px}
+.kpi b{display:block; font-size:1.05rem}
+.food-pick{display:flex; align-items:center; gap:10px; width:100%; min-height:52px; border:0; border-bottom:1px solid var(--line); background:none; text-align:left; padding:6px 2px}
+.food-pick.on{background:var(--food-soft)}
+.food-pick small{display:block; color:var(--muted); font-size:.8rem}
+.gdot{width:10px; height:10px; border-radius:50%; flex:none}
+
+label.f{display:block; margin:12px 0 4px; font-weight:700; font-size:.9rem}
+.in{width:100%; min-height:48px; border-radius:12px; border:1.5px solid var(--line); background:var(--surface); padding:0 14px; font-size:16px}
+.in:focus{border-color:var(--primary); outline:none}
+.help{font-size:.82rem; color:var(--muted); margin-top:4px}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.grid3{display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:6px; align-items:end}
+.stepper{display:flex; align-items:center; gap:6px}
+.stepper .in{text-align:center; font-weight:800}
+.opt{display:grid; gap:8px}
+.opt button{min-height:52px; border-radius:14px; border:1.5px solid var(--line); background:var(--surface); text-align:left; padding:8px 14px; font-weight:700}
+.opt button small{display:block; color:var(--muted); font-weight:500}
+.opt button.on{border-color:var(--primary); background:var(--primary-soft)}
+
+.sheet-bg{position:fixed; inset:0; background:rgba(30,20,15,.4); z-index:20; display:none}
+.sheet{position:fixed; left:0; right:0; bottom:0; z-index:21; background:var(--bg); border-radius:22px 22px 0 0; max-height:92dvh; overflow:auto; padding:8px 16px calc(20px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .25s ease; max-width:560px; margin:0 auto; overscroll-behavior:contain}
+.sheet.open{transform:none}
+.sheet-bg.open{display:block}
+.grab{width:40px; height:5px; border-radius:3px; background:var(--line); margin:4px auto 10px}
+.sheet-h{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
+
+nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:10; background:rgba(255,255,255,.96); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+.tabs-in{display:flex; max-width:560px; margin:0 auto}
+.tab{flex:1; min-height:60px; border:0; background:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:var(--muted); font-size:.72rem; font-weight:800; position:relative}
+.tab.on{color:var(--primary)}
+.tab.on::before{content:''; position:absolute; top:0; left:30%; right:30%; height:3px; border-radius:0 0 3px 3px; background:var(--primary)}
+.tab .dot{position:absolute; top:8px; right:calc(50% - 18px); width:9px; height:9px; border-radius:50%; background:var(--move); border:2px solid #fff}
+
+.toast{position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%) translateY(-20px); background:var(--ink); color:#fff; padding:12px 18px; border-radius:14px; font-weight:700; opacity:0; transition:.25s; z-index:30; max-width:90vw; text-align:center; pointer-events:none}
+.toast.show{opacity:1; transform:translateX(-50%)}
+.confetti{position:fixed; width:8px; height:8px; z-index:40; pointer-events:none; animation:fall 1s ease-out forwards}
+@keyframes fall{to{transform:translate(var(--dx), var(--dy)) rotate(260deg); opacity:0}}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
+
+.ob-wrap{min-height:100dvh; display:flex; flex-direction:column; padding-top:calc(16px + env(safe-area-inset-top)); padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.ob-steps{display:flex; gap:6px; margin-bottom:18px}
+.ob-steps i{flex:1; height:5px; border-radius:3px; background:var(--line)}
+.ob-steps i.on{background:var(--primary)}
+.ob-body{flex:1}
+.ob-foot{display:flex; gap:8px; margin-top:20px}
+.avatar-big{display:grid; place-items:center; background:linear-gradient(180deg, var(--sun-soft), #fff); border-radius:var(--r); padding:12px; margin:8px 0}
+.avatar-big canvas{image-rendering:pixelated}
+.welcome-bust{width:120px; height:120px; margin:24px auto 16px; border-width:3px}
+.welcome-bust canvas{width:120px; height:120px}
+
+.wardrobe-items{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+.witem{border:1.5px solid var(--line); background:var(--surface); border-radius:14px; padding:10px; text-align:left; min-height:64px; display:flex; gap:10px; align-items:center}
+.witem.on{border-color:var(--primary); background:var(--primary-soft)}
+.witem.try{border-color:var(--sun); background:var(--sun-soft)}
+.witem i{width:26px; height:26px; border-radius:8px; flex:none; border:1px solid rgba(0,0,0,.12)}
+.witem b{display:block; font-size:.88rem; line-height:1.25}
+.witem small{font-size:.76rem; color:var(--muted); font-weight:700}
+.buybar{position:sticky; bottom:calc(-20px - env(safe-area-inset-bottom)); background:var(--bg); padding:10px 0 4px; margin-top:8px}
+
+.chart{width:100%; height:auto}
+.chart text{font-size:10px; fill:var(--muted); font-family:var(--font); font-weight:700}
+.empty{color:var(--muted); text-align:center; padding:12px 0}
+.ex-row{border-top:1px solid var(--line); padding:10px 0}
+.ex-row:first-child{border-top:0}
+.trend-up{color:var(--food); font-weight:800}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="tabs" id="tabs" aria-label="Seções"></nav>
+<div class="sheet-bg" id="sheetBg" data-a="closeSheet"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileIn" accept="application/json,.json" class="sr" tabindex="-1" aria-hidden="true">
+
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   CONTEÚDO EDITÁVEL
+   ===================================================================== */
+const QUEM_DA_O_MIMO = 'Israel';
+const META_MIMO = 0.5;            // fração dos dias do mês com 1 missão
+const MIMOS = ['Chocolate', 'Sorvete', 'Outra besteirinha (você escolhe)'];
+// Mensagem do presente de boas-vindas (o colar)
+const MSG_COLAR = {titulo:'Olha o que não está mais quebrado!', texto:'Seu colar com nome voltou inteirinho. Aqui ele não quebra mais.', assinatura:'Israel'};
+
+// Moedas (só compram coisas da loja; o mimo vem da presença no mês)
+const GANHO = {missao:5, academia:15, caixinha:10, prato:5, verde:5, meta:10, marco:20, boasVindas:20};
+
+const CURIOSIDADES = [
+  'Sabia que o polvo tem três corações e sangue azul? Dois só para as brânquias.',
+  'O mel praticamente não estraga. Já acharam mel comestível em tumbas do Egito antigo.',
+  'Cada pé tem 26 ossos. Quase um quarto dos ossos do corpo está nos pés. Cada passinho conta!',
+  'A meta de 10 mil passos nasceu de uma propaganda japonesa dos anos 60. Os benefícios aparecem bem antes disso.',
+  'As lontras-marinhas dormem de mãos dadas para não se separarem na correnteza.',
+  'Um dia em Vênus dura mais que um ano em Vênus.',
+  'Flamingo nasce cinza. Ele fica rosa por causa do que come.',
+  'Brasília foi planejada no formato de um avião (ou de um pássaro, dependendo de quem conta).',
+  'Dormindo, o cérebro faz uma espécie de faxina e tira resíduos do dia. Dormir é manutenção!',
+  'Uma caminhada de 10 minutos depois de comer ajuda a controlar o açúcar no sangue.',
+  'O coração bate umas 100 mil vezes por dia, sem você pedir nenhuma.',
+  'O cérebro é só uns 2% do peso do corpo, mas gasta perto de 20% da energia.',
+  'Os golfinhos se chamam por "nomes": cada um tem um assobio próprio.',
+  'A Torre Eiffel fica alguns centímetros mais alta no verão, porque o ferro dilata.',
+  'Botanicamente, banana é baga e morango não é.',
+  'O coala dorme quase o dia inteiro: perto de 20 horas.',
+  'A cafeína leva umas 5 a 6 horas para cair pela metade no corpo. Café à tarde pode roubar o sono.',
+  'Cochilo bom é curto: uns 20 minutos já melhoram a atenção sem deixar grogue.',
+  'Bocejar é contagioso, até entre gente e cachorro.',
+  'O cheiro de terra molhada depois da chuva tem nome: petricor.',
+  'Gato não sente gosto doce. Ele não tem o receptor para isso.',
+  'Os tubarões são mais antigos que as árvores.',
+  'Elefante não consegue pular.',
+  'O panda passa umas 12 horas por dia comendo bambu.',
+  'O beija-flor pode bater as asas mais de 50 vezes por segundo.',
+  'O céu é azul porque o ar espalha mais a luz azul do sol do que as outras cores.',
+  'Uma colher de chá de mel é o trabalho de uma vida inteira de umas 12 abelhas.',
+  'Músculo não vira gordura, nem gordura vira músculo. São tecidos diferentes.',
+  'A luz da tela à noite atrasa a melatonina, o hormônio que avisa que é hora de dormir.',
+  'Escrever à mão ajuda a guardar melhor na memória do que digitar.',
+  'Ouvir música animada no treino faz a gente aguentar mais sem perceber.',
+  'Girassol jovem acompanha o sol ao longo do dia. Depois de adulto, fica virado para o leste.',
+  'O Rio Amazonas despeja tanta água no mar que dá para beber água doce longe da costa.',
+  'Água é uns 60% do corpo. Por isso um copo já faz diferença.',
+  'Feijão com arroz é uma dupla de ouro: um completa a proteína do outro.',
+  'O abacate é uma fruta, e tecnicamente uma baga também.',
+  'Sorvete foi luxo de rei por séculos, porque gelo era caríssimo.',
+  'O chocolate derrete perto de 34 °C, logo abaixo da temperatura da boca. Por isso derrete tão bem.',
+  'Escada vale ouro: subir degraus usa mais músculo que caminhar no plano.',
+  'Formiga não dorme como a gente: tira centenas de cochilos de um minuto por dia.'
+];
+const CATOLICO = [
+  {t:'Em paz me deito e logo adormeço, porque só tu, Senhor, me fazes repousar seguro.', r:'Salmo 4,9'},
+  {t:'Vinde a mim, todos vós que estais cansados, e eu vos aliviarei.', r:'Mateus 11,28'},
+  {t:'Tudo posso naquele que me fortalece.', r:'Filipenses 4,13'},
+  {t:'Santa Teresinha ensinou o "pequeno caminho": fazer coisas pequenas com muito amor. É exatamente um passinho por dia.', r:'Santa Teresinha do Menino Jesus'},
+  {t:'Tenha paciência com todas as coisas, mas principalmente consigo mesma.', r:'atribuído a São Francisco de Sales'},
+  {t:'Nada te perturbe, nada te espante. Tudo passa, só Deus não muda.', r:'Santa Teresa d\'Ávila'},
+  {t:'Jesus, eu confio em vós.', r:'Oração da Divina Misericórdia'},
+  {t:'Santo Anjo do Senhor, meu zeloso guardador, se a ti me confiou a piedade divina, sempre me rege, me guarda, me governa e me ilumina. Amém.', r:'Oração ao Anjo da Guarda'},
+  {t:'Não sabeis que o vosso corpo é templo do Espírito Santo? Cuidar de si também é oração.', r:'1 Coríntios 6,19'},
+  {t:'Lança sobre o Senhor os teus cuidados, e ele te susterá.', r:'Salmo 55,23'},
+  {t:'Em 1717, três pescadores acharam a imagem de Nossa Senhora Aparecida no rio Paraíba, primeiro o corpo e depois a cabeça.', r:'Curiosidade'},
+  {t:'São Carlo Acutis, canonizado em 2025, chamava a Eucaristia de "minha autoestrada para o céu".', r:'São Carlo Acutis'},
+  {t:'Alegrai-vos na esperança, sede pacientes na tribulação e perseverantes na oração.', r:'Romanos 12,12'},
+  {t:'Uma dezena do terço leva uns 3 minutos. Cabe até no caminho para o trabalho.', r:'Dica'}
+];
+
+const PILARES = [
+  {id:'sono', n:'Sono', cls:'p-sono', icon:'moon'},
+  {id:'comida', n:'Alimentação', cls:'p-comida', icon:'leaf'},
+  {id:'mov', n:'Movimento', cls:'p-mov', icon:'feet'}
+];
+const MISSOES = [
+  {id:'sono_reg', p:'sono', t:'Anotar como dormiu', auto:'Marca sozinha quando você anota o sono'},
+  {id:'sono_tela', p:'sono', t:'15 min sem celular antes de deitar'},
+  {id:'sono_cedo', p:'sono', t:'Deitar 15 min mais cedo que ontem'},
+  {id:'agua', p:'comida', t:'Beber {agua} copos de água'},
+  {id:'prato', p:'comida', t:'Montar um prato equilibrado', auto:'Marca sozinha: proteína, fibra e carboidrato no almoço ou jantar'},
+  {id:'cafe', p:'comida', t:'Tomar café da manhã'},
+  {id:'fruta', p:'comida', t:'Comer uma fruta', auto:'Marca sozinha se você anotar uma fruta'},
+  {id:'verde', p:'comida', t:'Pôr verdura ou legume no prato', auto:'Marca sozinha se você anotar uma verdura'},
+  {id:'alongar', p:'mov', t:'Alongar 2 minutos'},
+  {id:'caminhar', p:'mov', t:'Caminhar 10 minutos'},
+  {id:'escada', p:'mov', t:'Subir escada em vez do elevador'},
+  {id:'dancar', p:'mov', t:'Dançar uma música inteira'},
+  {id:'academia', p:'bonus', t:'Ir à academia'}
+];
+
+const SLOTS = [['cafe','Café da manhã'],['almoco','Almoço'],['lanche','Lanche'],['jantar','Jantar'],['extra','Beliscos']];
+const MAIN_SLOTS = ['almoco','jantar'];
+// medidas caseiras: gramas aproximadas (ela pode ajustar por alimento)
+const MEDIDA_G = {'porção':null,'g':1,'kg':1000,'ml':1,'colher de sopa':25,'colher de servir':45,'concha':130,'escumadeira':90,'pegador':110,'xícara':160,'copo':200,'fatia':30,'unidade':50,'pedaço':60,'pote':170,'prato':300};
+
+// Base de alimentos (do Prato Leve): [id, nome, grupo, porção, kcal, proteína, fibra, gramas da porção]
+const FOODS = [["arroz","Arroz branco","carbo","4 col. de sopa (100 g)",128,2.5,1.6,100],["arrozi","Arroz integral","carbo","4 col. de sopa (100 g)",124,2.6,2.7,100],["macarrao","Macarrão","carbo","1 pegador (100 g)",102,3.4,1,100],["macarraoi","Macarrão integral","carbo","1 pegador (100 g)",124,5,3.5,100],["batata","Batata cozida","carbo","1 média (100 g)",52,1.2,1.3,100],["batatadoce","Batata-doce cozida","carbo","1 média (100 g)",77,0.6,2.2,100],["mandioca","Mandioca cozida","carbo","2 pedaços (100 g)",125,0.6,1.6,100],["inhame","Inhame cozido","carbo","2 pedaços (100 g)",97,2.1,1.7,100],["cuscuz","Cuscuz de milho","carbo","1 fatia (100 g)",113,2.2,2.1,100],["tapioca","Tapioca","carbo","1 média (40 g de goma)",140,0,0,40],["paofrances","Pão francês","carbo","1 unidade (50 g)",150,4,1.2,50],["paoint","Pão integral","carbo","2 fatias (50 g)",127,4.7,3.4,50],["torrada","Torrada integral","carbo","3 unidades (30 g)",113,3.5,2.5,30],["biscoitoagua","Bolacha de água e sal","carbo","4 unidades (24 g)",104,2.4,0.8,24],["aveia","Aveia em flocos","carbo","2 col. de sopa (30 g)",118,4.4,2.9,30],["granola","Granola sem açúcar","carbo","2 col. de sopa (20 g)",85,2,1.5,20],["milho","Milho verde","carbo","3 col. de sopa (60 g)",59,1.9,2.8,60],["polenta","Polenta / angu","carbo","1 fatia (100 g)",70,1.6,0.8,100],["pipoca","Pipoca sem óleo","carbo","2 xícaras (15 g)",58,1.5,2,15],["farofa","Farofa pronta","carbo","1 col. de sopa (15 g)",61,0.3,1.2,15],["feijaoc","Feijão carioca","leg","1 concha (100 g)",76,4.8,8.5,100],["feijaop","Feijão preto","leg","1 concha (100 g)",77,4.5,8.4,100],["lentilha","Lentilha","leg","1 concha (100 g)",93,6.3,7.9,100],["grao","Grão-de-bico","leg","1 concha (100 g)",164,8.9,7.6,100],["ervilha","Ervilha","leg","3 col. de sopa (60 g)",50,3.2,3,60],["ovo","Ovo cozido ou mexido","prot","1 unidade (50 g)",73,6.6,0,50],["ovofrito","Ovo frito","prot","1 unidade",120,7,0,0],["frango","Peito de frango grelhado","prot","1 filé (100 g)",159,32,0,100],["frangodesf","Frango desfiado","prot","3 col. de sopa (75 g)",120,24,0,75],["coxa","Coxa de frango sem pele","prot","1 unidade (90 g)",194,25.6,0,90],["patinho","Carne moída (patinho)","prot","4 col. de sopa (100 g)",219,35.9,0,100],["alcatra","Bife de alcatra","prot","1 bife (100 g)",241,31.9,0,100],["alcatraair","Alcatra assada na airfryer","prot","2 fatias (100 g)",230,31.5,0,100],["coxaomole","Coxão mole cozido","prot","2 pedaços (100 g)",219,32.4,0,100],["sobrecoxa","Sobrecoxa sem osso na airfryer","prot","1 unidade (100 g)",233,29.2,0,100],["musculo","Carne de panela (músculo)","prot","2 pedaços (100 g)",194,31.2,0,100],["figado","Fígado acebolado","prot","1 bife (100 g)",225,29.9,0,100],["lombo","Lombo de porco assado","prot","2 fatias (100 g)",210,35.7,0,100],["tilapia","Tilápia grelhada","prot","1 filé (120 g)",154,31,0,120],["merluza","Merluza assada","prot","1 filé (120 g)",146,31.6,0,120],["sardinha","Sardinha em lata","prot","½ lata escorrida (60 g)",171,9.5,0,60],["atum","Atum em água","prot","½ lata escorrida (60 g)",70,15,0,60],["peru","Peito de peru","prot","3 fatias (30 g)",33,6,0,30],["iogurte","Iogurte natural","leite","1 pote (170 g)",87,7,0,170],["iogurted","Iogurte natural desnatado","leite","1 pote (170 g)",70,6.5,0,170],["leited","Leite desnatado","leite","1 copo (200 ml)",70,6,0,200],["leitei","Leite integral","leite","1 copo (200 ml)",120,6,0,200],["leiteisl","Leite integral sem lactose","leite","1 copo (200 ml)",118,6,0,200],["minas","Queijo minas frescal","leite","1 fatia (30 g)",79,5.2,0,30],["ricota","Ricota","leite","2 fatias finas (30 g)",42,3.4,0,30],["cottage","Queijo cottage","leite","2 col. de sopa (40 g)",40,5,0,40],["mussarela","Muçarela","leite","2 fatias (30 g)",99,6.8,0,30],["requeijao","Requeijão light","leite","1 col. de sopa (20 g)",36,2,0,20],["salada","Salada de folhas","veg","1 prato raso",15,1.3,1.5,0],["tomate","Tomate","veg","1 unidade (100 g)",15,1.1,1.2,100],["pepino","Pepino","veg","½ unidade (100 g)",10,0.9,0.5,100],["cenoura","Cenoura cozida","veg","3 col. de sopa (75 g)",23,0.6,2,75],["cenourar","Cenoura ralada","veg","3 col. de sopa (50 g)",17,0.7,1.6,50],["abobrinha","Abobrinha refogada","veg","3 col. de sopa (80 g)",25,1,1.3,80],["chuchu","Chuchu cozido","veg","3 col. de sopa (80 g)",15,0.3,1,80],["brocolis","Brócolis","veg","3 ramos (60 g)",15,1.3,2,60],["couveflor","Couve-flor","veg","3 ramos (60 g)",11,1.2,1.3,60],["couve","Couve refogada","veg","2 col. de sopa (40 g)",36,0.7,2,40],["espinafre","Espinafre refogado","veg","2 col. de sopa (40 g)",27,1.1,1,40],["repolho","Repolho refogado","veg","3 col. de sopa (60 g)",20,1,1.2,60],["beterraba","Beterraba cozida","veg","3 col. de sopa (60 g)",19,0.8,1.1,60],["vagem","Vagem","veg","3 col. de sopa (60 g)",15,0.9,1.5,60],["abobora","Abóbora cozida","veg","3 col. de sopa (80 g)",38,1.1,2,80],["quiabo","Quiabo refogado","veg","3 col. de sopa (60 g)",25,1.1,2.8,60],["berinjela","Berinjela assada","veg","3 col. de sopa (60 g)",15,0.4,1.5,60],["jilo","Jiló refogado","veg","3 col. de sopa (60 g)",25,0.8,2.9,60],["banana","Banana prata","fruta","1 unidade (70 g)",69,0.9,1.4,70],["maca","Maçã","fruta","1 unidade (130 g)",73,0.4,1.7,130],["mamao","Mamão papaia","fruta","½ unidade (150 g)",60,0.8,2.7,150],["laranja","Laranja","fruta","1 unidade (180 g)",67,1.6,1.4,180],["tangerina","Mexerica","fruta","1 unidade (135 g)",51,1.1,1.2,135],["melancia","Melancia","fruta","1 fatia (200 g)",66,1.8,0.2,200],["melao","Melão","fruta","1 fatia (150 g)",44,1.1,0.5,150],["abacaxi","Abacaxi","fruta","1 fatia (75 g)",36,0.7,0.8,75],["manga","Manga","fruta","½ unidade (150 g)",77,0.6,2.4,150],["goiaba","Goiaba","fruta","1 unidade (150 g)",81,1.7,9.3,150],["morango","Morango","fruta","10 unidades (120 g)",36,1.1,2,120],["uva","Uva","fruta","1 cacho pequeno (100 g)",53,0.7,0.9,100],["pera","Pera","fruta","1 unidade (130 g)",69,0.8,3.9,130],["kiwi","Kiwi","fruta","1 unidade (75 g)",38,0.9,2,75],["abacate","Abacate","fruta","2 col. de sopa (50 g)",48,0.6,3.2,50],["azeite","Azeite","gord","1 col. de sopa (13 ml)",108,0,0,13],["oleo","Óleo para refogar","gord","1 col. de chá (5 ml)",44,0,0,5],["manteiga","Manteiga","gord","1 col. de chá (10 g)",73,0.1,0,10],["castanha","Castanha-do-pará","gord","2 unidades (8 g)",52,1.2,0.6,8],["caju","Castanha de caju","gord","10 unidades (15 g)",85,2.8,0.5,15],["amendoim","Amendoim torrado","gord","1 punhado (20 g)",116,5.5,1.6,20],["pasta","Pasta de amendoim","gord","1 col. de sopa (15 g)",90,4,1.2,15],["chia","Chia","gord","1 col. de sopa (10 g)",49,1.7,3.4,10],["cafe","Café sem açúcar","bebida","1 xícara",3,0.2,0,0],["cafeacucar","Café com açúcar","bebida","1 xícara (2 col. de chá)",43,0.2,0,0],["cafeleite","Café com leite desnatado","bebida","1 xícara (150 ml)",40,3.5,0,150],["cafeleitei","Café com leite integral","bebida","1 xícara (150 ml)",62,3.1,0,150],["cafeleiteisl","Café com leite integral sem lactose","bebida","1 xícara (150 ml)",61,3.1,0,150],["cha","Chá sem açúcar","bebida","1 xícara",2,0,0,0],["vitamina","Vitamina de banana","bebida","1 copo (300 ml, leite integral)",220,7.5,1.5,300],["sucolaranja","Suco de laranja natural","bebida","1 copo (200 ml)",90,1.4,0.4,200],["aguacoco","Água de coco","bebida","1 copo (200 ml)",44,0,0,200],["sucocaixa","Suco de caixinha","bebida","1 copo (200 ml)",90,0,0,200],["refri","Refrigerante","bebida","1 lata (350 ml)",140,0,0,350],["refrizero","Refrigerante zero","bebida","1 lata (350 ml)",2,0,0,350],["cerveja","Cerveja","bebida","1 lata (350 ml)",150,1.5,0,350],["paoqueijo","Pão de queijo","extra","1 médio (40 g)",145,2.1,0,40],["coxinha","Coxinha","extra","1 unidade (80 g)",230,8,0.8,80],["pastel","Pastel frito","extra","1 unidade (80 g)",280,7,0.8,80],["pizza","Pizza","extra","1 fatia (120 g)",300,12,1.5,120],["hamburguer","Hambúrguer de lanchonete","extra","1 unidade",500,25,2,0],["batatafrita","Batata frita","extra","porção pequena (100 g)",270,3.5,2,100],["salsicha","Salsicha","extra","1 unidade (40 g)",105,5,0,40],["linguica","Linguiça","extra","1 gomo (60 g)",175,10,0,60],["salgadinho","Salgadinho de pacote","extra","1 pacote pequeno (45 g)",225,3,1,45],["biscoitorech","Biscoito recheado","extra","3 unidades (36 g)",170,2,0.6,36],["bolo","Bolo simples","extra","1 fatia (60 g)",190,3.5,0.5,60],["brigadeiro","Brigadeiro","extra","1 unidade (20 g)",85,1,0,20],["chocolate","Chocolate ao leite","extra","4 quadradinhos (25 g)",135,1.8,0.8,25],["sorvete","Sorvete","extra","1 bola (60 g)",110,2,0,60],["acai","Açaí na tigela","extra","300 ml com granola e banana",450,6,6,300],["acucar","Açúcar","extra","1 col. de chá (5 g)",20,0,0,5],["paoforma","Pão de forma branco","carbo","2 fatias (50 g)",127,4,1.6,50],["beiju","Beiju de tapioca com coco","carbo","1 unidade (60 g)",190,1,1.5,60],["cuscuzpaulista","Cuscuz paulista","carbo","1 fatia (120 g)",180,7,2,120],["batatapalha","Batata palha","extra","2 col. de sopa (15 g)",80,1,0,15],["pure","Purê de batata","carbo","3 col. de sopa (90 g)",110,1.8,1.2,90],["arrozcarreteiro","Arroz carreteiro","prato","1 escumadeira (150 g)",260,12,1.5,150],["feijoada","Feijoada","prato","1 concha cheia (200 g)",300,18,5,200],["baiao","Baião de dois","prato","1 escumadeira (150 g)",240,9,4,150],["galinhada","Galinhada","prato","1 escumadeira (180 g)",290,16,1.5,180],["strogonoff","Strogonoff de frango","prato","2 col. de servir (150 g)",230,18,0,150],["lasanha","Lasanha","prato","1 pedaço (200 g)",390,20,2,200],["parmegiana","Frango à parmegiana","prato","1 filé (180 g)",420,34,0,180],["sopacreme","Caldo de abóbora ou mandioca","prato","1 prato fundo (300 ml)",200,6,3,300],["carnesol","Carne de sol","prot","4 col. de sopa (80 g)",200,26,0,80],["costela","Costela assada","prot","1 pedaço (100 g)",370,27,0,100],["pernil","Pernil assado","prot","2 fatias (100 g)",260,30,0,100],["almondega","Almôndega de carne","prot","3 unidades (90 g)",200,16,0,90],["linguicafrango","Linguiça de frango","prot","1 gomo (60 g)",120,10,0,60],["omelete","Omelete de 2 ovos","prot","1 unidade",190,13,0,0],["presunto","Presunto","prot","3 fatias (30 g)",45,5,0,30],["coalho","Queijo coalho","leite","1 espeto (40 g)",140,9.5,0,40],["queijoprato","Queijo prato","leite","2 fatias (30 g)",108,7.3,0,30],["grego","Iogurte grego","leite","1 pote (100 g)",120,5,0,100],["kefir","Kefir ou iogurte caseiro","leite","1 copo (200 ml)",120,7,0,200],["whey","Whey protein","leite","1 dose (30 g)",120,24,0,30],["saladafrutas","Salada de frutas","fruta","1 taça (150 g)",90,1,2.5,150],["bananananica","Banana nanica","fruta","1 unidade (100 g)",92,1.4,2,100],["caqui","Caqui","fruta","1 unidade (110 g)",78,0.4,4,110],["jabuticabaf","Jabuticaba","fruta","1 xícara (100 g)",58,0.6,2.3,100],["maracujaf","Maracujá","fruta","1 unidade (polpa 50 g)",34,1,5,50],["ameixa","Ameixa","fruta","2 unidades (100 g)",53,0.8,2.4,100],["pacoca","Paçoca","extra","1 unidade (20 g)",95,3,1.5,20],["pudim","Pudim de leite","extra","1 fatia (80 g)",230,5,0,80],["pedemoleque","Pé de moleque","extra","1 unidade (20 g)",95,2.5,1.2,20],["cappuccino","Cappuccino","bebida","1 xícara (200 ml)",140,4,0,200],["chamate","Chá mate gelado sem açúcar","bebida","1 copo (300 ml)",5,0,0,300],["vinho","Vinho","bebida","1 taça (150 ml)",125,0,0,150],["caipirinha","Caipirinha","bebida","1 copo",220,0,0,0],["energetico","Energético","bebida","1 lata (250 ml)",115,0,0,250],["sopa","Sopa de legumes com frango","prato","1 prato fundo (300 ml)",180,15,3,300],["selfservice","Self-service no método do prato","prato","1 prato montado",480,32,8,0],["pf","Prato feito de restaurante","prato","1 prato cheio",750,35,7,0]];
+const GROUPS = {"carbo":"Arroz, pães e raízes","leg":"Feijões e grãos","prot":"Carnes, ovos e peixes","leite":"Leite e queijos","veg":"Verduras e legumes","fruta":"Frutas","gord":"Gorduras boas e castanhas","bebida":"Bebidas","extra":"Doces, salgados e lanches","prato":"Pratos prontos e comer fora"};
+const GROUP_COLOR = {carbo:'#E0B04A', leg:'#8D5A3B', prot:'#C8553D', leite:'#7FA7D9', veg:'#2E7D4F', fruta:'#E07A9B', gord:'#A3A03A', bebida:'#5B8FB0', extra:'#9C6ADE', prato:'#6B5F57', outro:'#999'};
+
+const MOVIMENTOS = [['caminhada','Caminhada'],['alongamento','Alongamento'],['danca','Dança'],['escada','Escada'],['bike','Bicicleta'],['outro','Outro']];
+const MEDIDAS = [['peso','Peso','kg'],['cintura','Cintura','cm'],['abdomen','Abdômen','cm'],['quadril','Quadril','cm'],['braco','Braço','cm'],['coxa','Coxa','cm']];
+const ATIV = [[1.2,'Parada','quase não me mexo'],[1.375,'Leve','caminho um pouco, treino 1 a 2x'],[1.55,'Moderada','treino 3 a 5x na semana']];
+const RITMO = [[0,'Só manter','comer bem, sem perder peso'],[300,'Devagar','perder peso com calma'],[450,'Um pouco mais rápido','ainda tranquilo e seguro']];
+
+// Roupas: [id, parte, estilo, cor, nome, preço]  (preço 0 = já vem; -1 = presente)
+const ROUPAS = [
+  ['tee_branca','top','tee','#F4F1EC','Camiseta branca',0],
+  ['tee_rosa','top','tee','#E8A0B4','Camiseta rosa',80],
+  ['tee_preta','top','tee','#3A3438','Camiseta preta',80],
+  ['regata_branca','top','regata','#F7F4EE','Regata branca',70],
+  ['regata_agua','top','regata','#8FD3C8','Regata verde-água',90],
+  ['top_academia','top','cropped','#5A5FC0','Top de academia',100],
+  ['cropped_lilas','top','cropped','#C7B2E8','Cropped lilás',120],
+  ['halter_amarela','top','halter','#F2E49A','Blusa amarela de amarrar',140],
+  ['moletom_cinza','top','moletom','#B8B4AE','Moletom cinza',130],
+  ['moletom_vinho','top','moletom','#8B3A62','Moletom vinho',150],
+  ['blazer_branco','top','blazer','#F6F3EE','Blazer branco',200],
+  ['calca_cinza','bottom','calca','#A7A39C','Calça cinza',0],
+  ['calca_amarela','bottom','calca','#F2D64B','Calça amarela',150],
+  ['jeans','bottom','skinny','#4A6FA5','Calça jeans',120],
+  ['legging','bottom','skinny','#2E2A30','Legging preta',90],
+  ['short_jeans','bottom','short','#6A8CC0','Short jeans',90],
+  ['saia_jeans','bottom','saia','#5B7FB5','Saia jeans',110],
+  ['saia_rosa','bottom','saia','#E8A0B4','Saia rosa',110],
+  ['vestido_amarelo','full','vestido','#F2E49A','Vestido amarelo',180],
+  ['vestido_azul','full','vestido','#7FA7D9','Vestido azul',180],
+  ['vestido_rose','full','vestido','#E8A0A8','Vestido rosé',180],
+  ['vestido_longo','full','longo','#2E2A30','Vestido longo preto',220],
+  ['tenis_branco','shoes','tenis','#F4F1EC','Tênis branco',0],
+  ['tenis_rosa','shoes','tenis','#E8A0B4','Tênis rosa',90],
+  ['sandalia','shoes','sandalia','#D4A537','Sandália dourada',100],
+  ['bota','shoes','bota','#6B4A33','Bota marrom',140],
+  ['colar_ana','acc','colar','#D5DAE2','Colar ANA',-1],
+  ['laco','acc','laco','#8B3A62','Laço no cabelo',60],
+  ['oculos','acc','oculos','#2A2A33','Óculos de sol',90],
+  ['chapeu','acc','chapeu','#E8D6A8','Chapéu de praia',120],
+  ['regata_preta','top','regata','#3A3438','Regata preta',70],
+  ['tee_amarela','top','tee','#F4D35E','Camiseta amarela',80],
+  ['moletom_rosa','top','moletom','#E8A0B4','Moletom rosa',130],
+  ['calca_branca','bottom','calca','#F1EEE8','Calça branca',120],
+  ['legging_vinho','bottom','skinny','#7A2E4E','Legging vinho',90],
+  ['short_rosa','bottom','short','#E8A0B4','Short rosa',90],
+  ['vestido_verde','full','vestido','#9CC9A0','Vestido verde',180],
+  ['vestido_longo_vinho','full','longo','#8B3A62','Vestido longo vinho',220],
+  ['tenis_preto','shoes','tenis','#3A3438','Tênis preto',90],
+  ['brinco','acc','brinco','#D4A537','Brinco de argola',70],
+  ['pulseira','acc','pulseira','#D4A537','Pulseira dourada',60],
+  ['tiara','acc','tiara','#E8A0B4','Tiara',60]
+];
+const LOJA_QUARTO = [['gato','Gatinho',150],['girassol','Vaso de girassol',90],['quadro_praia','Quadro de praia',100]];
+const PELES = ['#F6D7C3','#EBC0A0','#D9A27E','#C88B62','#A96F4B','#8A5A3B','#6B4128','#4E2E1C'];
+const CABELOS = ['#1D1519','#2B1B2E','#3B2418','#6A4127','#9C6B3C','#D2A35C','#E9D6A8','#7A2E2A'];
+const OLHOS = [['#3A2318','Castanho escuro'],['#7A4A22','Mel'],['#3F6B3A','Verde'],['#3E5F8A','Azul']];
+const BATONS = [['natural','Natural'],['#D46A8C','Rosa'],['#B97A6A','Nude'],['#B3263A','Vermelho'],['#7A2442','Vinho']];
+const PENTEADOS = [['solto','Solto longo'],['franja','Com franja'],['cacheado','Cacheado'],['rabo','Rabo de cavalo'],['tranca','Trança'],['coque','Coque'],['curto','Chanel']];
+
+const ITENS = {
+  pampas:{n:'Vaso de capim-dos-pampas'}, tapete:{n:'Tapete fofinho'}, planta:{n:'Plantinha'}, quadro:{n:'Quadro florido'},
+  luminaria:{n:'Luminária'}, espelho:{n:'Espelho dourado'}, almofada:{n:'Almofadas'}, cortina:{n:'Cortina'},
+  prateleira:{n:'Prateleira'}, relogio:{n:'Relógio de parede'}, chapeu:{n:'Chapéu de praia na parede'}, pelucia:{n:'Ursinho'},
+  livros:{n:'Livros'}, caneca:{n:'Caneca'},
+  terco:{n:'Terço', cat:1}, vela:{n:'Vela', cat:1}, santa:{n:'Imagem de Nossa Senhora', cat:1},
+  tenis:{n:'Tênis de academia', marco:'Primeira ida à academia'}, halteres:{n:'Halteres', marco:'5 idas à academia'},
+  estrelas:{n:'Estrelinhas no teto', marco:'7 noites anotadas'}, luzinhas:{n:'Varal de luzinhas', marco:'7 dias seguidos'},
+  gato:{n:'Gatinho', loja:150}, girassol:{n:'Vaso de girassol', loja:90}, quadro_praia:{n:'Quadro de praia', loja:100}
+};
+const ORDEM_CAIXA = ['pampas','tapete','planta','quadro','luminaria','espelho','almofada','cortina','prateleira','relogio','chapeu','livros','pelucia','caneca'];
+const ORDEM_CAT = ['terco','vela','santa'];
+const CODIGOS = {"693946396": 50, "15524074": 50, "490890581": 50, "288947292": 50, "925802354": 50, "1339947394": 50, "3312421900": 50, "1241107220": 50, "2344365030": 50, "1136914874": 50, "1393062882": 50, "4268931977": 50, "1154095799": 50, "849257163": 50, "3777630317": 50, "3052221249": 50, "3798779322": 50, "907436957": 50, "3081338960": 50, "242754682": 50, "1984210210": 50, "3087928429": 50, "2719851624": 50, "787650351": 50, "3243206173": 50, "2757286997": 50, "1479636798": 50, "2510389321": 50, "3807059505": 50, "4161554562": 50};
+
+/* ===================================================================== utilidades */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf0 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits:1});
+const nf2 = new Intl.NumberFormat('pt-BR', {maximumFractionDigits:2});
+const uid = () => Math.random().toString(36).slice(2, 9);
+const num = v => { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isFinite(n) ? n : null; };
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function today(){ return ymd(new Date()); }
+function toDate(s){ const p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2]); }
+function addDays(s, n){ const d = toDate(s); d.setDate(d.getDate()+n); return ymd(d); }
+function weekKey(s){ const d = toDate(s); d.setDate(d.getDate() - (d.getDay()+6) % 7); return ymd(d); }
+function fmtD(s, o){ return toDate(s).toLocaleDateString('pt-BR', o || {day:'2-digit', month:'2-digit'}); }
+function dayLabel(s){ const t = today(); if (s === t) return 'Hoje'; if (s === addDays(t,-1)) return 'Ontem'; return fmtD(s, {weekday:'short', day:'2-digit', month:'2-digit'}); }
+function hash(s){ let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function fmtH(h){ const hh = Math.floor(h), mm = Math.round((h - hh) * 60); return hh + 'h' + (mm ? String(mm).padStart(2,'0') : ''); }
+function toMin(t){ const p = t.split(':').map(Number); return p[0]*60 + p[1]; }
+function sleepHours(b, w){ let d = toMin(w) - toMin(b); if (d <= 0) d += 1440; return d / 60; }
+const monthKey = s => s.slice(0, 7);
+function monthName(ym){ const p = ym.split('-').map(Number); return new Date(p[0], p[1]-1, 1).toLocaleDateString('pt-BR', {month:'long'}); }
+function hex2rgb(h){ const n = parseInt(h.slice(1), 16); return [(n>>16)&255, (n>>8)&255, n&255]; }
+function rgb2hex(r){ return '#' + r.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2,'0')).join(''); }
+function shade(h, f){ return rgb2hex(hex2rgb(h).map(v => f < 0 ? v * (1 + f) : v + (255 - v) * f)); }
+function mix(a, b, t){ const A = hex2rgb(a), B = hex2rgb(b); return rgb2hex(A.map((v, i) => v * (1 - t) + B[i] * t)); }
+
+/* ===================================================================== ícones */
+const IC = {
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  leaf:'<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l7-7"/>',
+  dumbbell:'<path d="M6 7v10M3 9v6M18 7v10M21 9v6M6 12h12"/>',
+  body:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  house:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
+  drop:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+  feet:'<path d="M8 13c-2 0-3-2-3-5s1-5 3-5 3 2 3 5-1 5-3 5zM8 16v4M16 21c-2 0-3-2-3-4s1-5 3-5 3 2 3 5-1 4-3 4z"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  gift:'<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/>',
+  flame:'<path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 2-6 2 1 3 3 3 3s0-5 1-8z"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/>',
+  check:'<path d="M5 12l5 5L20 7"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  minus:'<path d="M5 12h14"/>',
+  left:'<path d="M15 6l-6 6 6 6"/>',
+  right:'<path d="M9 6l6 6-6 6"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  swap:'<path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/>',
+  play:'<path d="M7 4l13 8-13 8z"/>',
+  shirt:'<path d="M8 3l-5 3 2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0z"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+  label:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  sprout:'<path d="M12 21v-9M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-4 3-6 7-6 0 4-3 6-7 6z"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n] || ''}</svg>`;
+
+/* ===================================================================== estado */
+const KEY = 'passinho';
+let S = null;
+function defaultState(){
+  return {
+    v:2, name:'', start:today(), onboarded:false,
+    profile:{idade:null, altura:null, ativ:1.375, ritmo:300, kcalManual:null},
+    agua:6, pick:{sono:'sono_reg', comida:'prato', mov:'alongar'},
+    days:{}, sleep:{},
+    customFoods:[], foodEdits:{}, recentFoods:[],
+    fichas:[], sessions:[], measures:[],
+    look:{pele:'#C88B62', cabelo:'#1D1519', penteado:'solto', olhos:'#3A2318', batom:'natural', blush:'sim'},
+    owned:{tee_branca:1, calca_cinza:1, tenis_branco:1}, wear:{top:'tee_branca', bottom:'calca_cinza', full:null, shoes:'tenis_branco', acc:{}},
+    coins:0, earned:{}, codes:{},
+    room:{items:{}}, cards:[], boxes:0, seen:{curio:[], cat:[]},
+    mimos:{}, lastBackup:null
+  };
+}
+function migrate(){
+  const d = defaultState();
+  for (const k in d) if (S[k] === undefined) S[k] = d[k];
+  for (const k in d.profile) if (S.profile[k] === undefined) S.profile[k] = d.profile[k];
+  for (const k in d.look) if (S.look[k] === undefined) S.look[k] = d.look[k];
+  if (!S.wear.acc) S.wear.acc = {};
+  ['sono','comida','mov'].forEach(p => { if (!S.pick[p] || !mis(S.pick[p])) S.pick[p] = d.pick[p]; });
+}
+function load(){ try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e){ S = null; } if (!S || !S.v) S = defaultState(); migrate(); }
+let idbT;
+function save(){ let txt; try { txt = JSON.stringify(S); localStorage.setItem(KEY, txt); } catch(e){} idbSave(txt); }
+function idbOpen(){ return new Promise((ok, no) => { try { const r = indexedDB.open('passinho', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); } catch(e){ no(e); } }); }
+function idbSave(txt){ if (!txt || typeof indexedDB === 'undefined') return; clearTimeout(idbT); idbT = setTimeout(() => { idbOpen().then(db => { db.transaction('kv', 'readwrite').objectStore('kv').put(txt, 'state'); }).catch(() => {}); }, 600); }
+function idbLoad(){ return idbOpen().then(db => new Promise(ok => { const r = db.transaction('kv').objectStore('kv').get('state'); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); })).catch(() => null); }
+function getDay(k, create){ let d = S.days[k]; if (!d && create){ d = S.days[k] = {m:{}, agua:0, food:[], ex:[]}; } return d; }
+
+/* moedas: cada ganho tem uma chave, então nunca conta duas vezes */
+const pendingCoins = [];
+function earn(key, amount, why){ if (S.earned[key]) return 0; S.earned[key] = amount; S.coins += amount; pendingCoins.push([amount, why]); return amount; }
+function flushCoins(){ if (!pendingCoins.length) return 0; const tot = pendingCoins.reduce((a, x) => a + x[0], 0); const why = pendingCoins.map(x => x[1]).filter(Boolean)[0]; pendingCoins.length = 0; toast('+' + tot + ' moedas' + (why ? ' · ' + why : '')); return tot; }
+
+/* ===================================================================== alimentos */
+let F = {};
+function rebuildFoods(){
+  F = {};
+  FOODS.forEach(a => { F[a[0]] = {id:a[0], n:a[1], g:a[2], p:a[3], k:a[4], pr:a[5], fb:a[6], gr:a[7] || null, uw:{}}; });
+  for (const id in S.foodEdits) if (F[id]) F[id].uw = Object.assign({}, S.foodEdits[id].uw || {});
+  S.customFoods.forEach(c => { F[c.id] = Object.assign({uw:{}}, c, {custom:true}); });
+}
+const foodById = id => F[id];
+function portionUnit(f){ const m = norm(f.p || '').match(/^1\s+([a-zçãéí ]+?)(\s*\(|$)/); if (!m) return null; const w = m[1].trim(); const u = Object.keys(MEDIDA_G).find(x => norm(x) === w || (w === 'media' && x === 'unidade') || (w === 'col. de sopa' && x === 'colher de sopa')); return u || null; }
+function gramsPer(f, u){
+  if (f.uw && f.uw[u]) return f.uw[u];
+  if (u === 'porção') return f.gr;
+  if (u === 'g' || u === 'ml') return 1;
+  if (u === 'kg') return 1000;
+  if (portionUnit(f) === u && f.gr) return f.gr;
+  return MEDIDA_G[u] || null;
+}
+function kcalOf(f, q, u){
+  if (!f) return null;
+  if (u === 'porção') return f.k * q;
+  if (portionUnit(f) === u && !(f.uw && f.uw[u])) return f.k * q;
+  const g = gramsPer(f, u);
+  if (g && f.gr) return f.k * q * g / f.gr;
+  return null;
+}
+function nutOf(f, q, u){ const k = kcalOf(f, q, u); if (k == null || !f.k) return {k:null, pr:0, fb:0}; const r = k / f.k; return {k, pr:(f.pr || 0) * r, fb:(f.fb || 0) * r}; }
+function roles(f){
+  const r = [];
+  if (['prot','leite','leg'].indexOf(f.g) >= 0 || f.pr >= 8) r.push('prot');
+  if (['veg','fruta','leg'].indexOf(f.g) >= 0 || (f.fb || 0) >= 2.5) r.push('fibra');
+  if (f.g === 'carbo') r.push('carbo');
+  if (f.g === 'prato'){ r.push('prot'); r.push('fibra'); r.push('carbo'); }
+  return r;
+}
+function slotRoles(d, sid){ const set = {}; ((d && d.food) || []).filter(x => x.s === sid).forEach(x => { const f = foodById(x.f); if (f) roles(f).forEach(r => set[r] = 1); }); return set; }
+function balanced(d, sid){ const r = slotRoles(d, sid); return !!(r.prot && r.fibra && r.carbo); }
+function dayNut(d){ let k = 0, pr = 0, fb = 0, unknown = 0; ((d && d.food) || []).forEach(x => { if (x.k == null) unknown++; else { k += x.k; pr += x.pr || 0; fb += x.fb || 0; } }); return {k, pr, fb, unknown}; }
+
+/* metas (mesmo cálculo do Prato Leve) */
+function latestOf(key){ const m = S.measures.slice().sort((a, b) => a.d < b.d ? -1 : 1); for (let i = m.length - 1; i >= 0; i--) if (m[i][key] != null) return m[i][key]; return null; }
+function activityAuto(){ let m = 0; const t = today(); for (let i = 0; i < 14; i++) m += exMin(S.days[addDays(t, -i)]); const wk = Math.round(m / 2); return wk >= 300 ? 1.725 : wk >= 150 ? 1.55 : wk >= 60 ? 1.375 : 1.2; }
+function targets(){
+  const p = S.profile, peso = latestOf('peso') || 65, idade = p.idade || 28, alt = p.altura || 160;
+  const ativ = Math.max(p.ativ || 1.375, activityAuto());
+  const tmb = 10 * peso + 6.25 * alt - 5 * idade - 161;
+  let kcal = Math.max(1200, Math.round((tmb * ativ - (p.ritmo || 0)) / 10) * 10);
+  if (p.kcalManual) kcal = p.kcalManual;
+  return {kcal, prot:Math.round(peso * 1.2), fibra:25, tmb:Math.round(tmb), get:Math.round(tmb * ativ), peso};
+}
+
+/* ===================================================================== regras do jogo */
+const mis = id => MISSOES.find(m => m.id === id);
+const misText = m => m.t.replace('{agua}', S.agua);
+function exMin(d, t){ return (d && d.ex || []).filter(e => !t || e.t === t).reduce((a, e) => a + (e.min || 0), 0); }
+function isDone(k, id){
+  const d = S.days[k];
+  if (id === 'sono_reg') return !!S.sleep[k];
+  if (!d) return false;
+  if (d.m[id]) return true;
+  if (id === 'agua') return (d.agua || 0) >= S.agua;
+  if (id === 'prato') return MAIN_SLOTS.some(s => balanced(d, s));
+  if (id === 'cafe') return (d.food || []).some(x => x.s === 'cafe');
+  if (id === 'fruta') return (d.food || []).some(x => { const f = foodById(x.f); return f && f.g === 'fruta'; });
+  if (id === 'verde') return (d.food || []).some(x => { const f = foodById(x.f); return f && f.g === 'veg'; });
+  if (id === 'caminhar') return exMin(d, 'caminhada') >= 10;
+  if (id === 'alongar') return exMin(d, 'alongamento') >= 2;
+  if (id === 'dancar') return exMin(d, 'danca') >= 3;
+  if (id === 'escada') return exMin(d, 'escada') > 0;
+  if (id === 'academia') return !!d.gym;
+  return false;
+}
+const pillarDone = (k, p) => MISSOES.filter(m => m.p === p).some(m => isDone(k, m.id));
+function pillarDoneId(k, p){ if (isDone(k, S.pick[p])) return S.pick[p]; const m = MISSOES.find(x => x.p === p && isDone(k, x.id)); return m ? m.id : null; }
+const doneCount = k => PILARES.filter(p => pillarDone(k, p.id)).length;
+const isActive = k => doneCount(k) > 0 || isDone(k, 'academia');
+function streak(){
+  const t = today(); let k = isActive(t) ? t : addDays(t, -1), n = 0; const shields = {};
+  while (k >= S.start){
+    if (isActive(k)) n++;
+    else { const w = weekKey(k); if (!shields[w] && n > 0) shields[w] = 1; else break; }
+    k = addDays(k, -1);
+  }
+  return n;
+}
+function monthInfo(ym){
+  const p = ym.split('-').map(Number), first = ym + '-01', last = ymd(new Date(p[0], p[1], 0));
+  let total = 0, got = 0, k = S.start > first ? S.start : first; const t = today();
+  while (k <= last){ total++; if (k <= t && isActive(k)) got++; k = addDays(k, 1); }
+  const need = Math.max(1, Math.ceil(total * META_MIMO));
+  return {total, got, need, won:got >= need, left:Math.max(0, need - got)};
+}
+function sleepAvg(n){ const ks = Object.keys(S.sleep).sort().slice(-n); if (!ks.length) return null; return {avg:ks.reduce((a, k) => a + S.sleep[k].h, 0) / ks.length, n:ks.length}; }
+const gymCount = () => Object.keys(S.days).filter(k => S.days[k].gym).length;
+function dayOnTarget(k){ const d = S.days[k]; if (!d) return false; const slots = new Set((d.food || []).map(x => x.s)); if (slots.size < 2) return false; const n = dayNut(d), t = targets(); return n.k >= t.kcal * 0.8 && n.k <= t.kcal * 1.1; }
+function balancedLast7(){ let n = 0; const t = today(); for (let i = 0; i < 7; i++){ const d = S.days[addDays(t, -i)]; if (d) MAIN_SLOTS.forEach(s => { if (balanced(d, s)) n++; }); } return n; }
+function verdeDay(k){ return isDone(k, 'fruta') && isDone(k, 'verde'); }
+
+/* tudo que dá moeda ou conquista é conferido aqui */
+function settle(){
+  const t = today(), got = [];
+  allDayKeys().forEach(k => {
+    if (k < S.start) return;
+    PILARES.forEach(p => { if (pillarDone(k, p.id)) earn('m:' + k + ':' + p.id, GANHO.missao, 'missão'); });
+    if (isDone(k, 'academia')) earn('gym:' + k, GANHO.academia, 'academia');
+    const d = S.days[k];
+    if (d) MAIN_SLOTS.forEach(s => { if (balanced(d, s)) earn('prato:' + k + ':' + s, GANHO.prato, 'prato equilibrado'); });
+    if (verdeDay(k)) earn('verde:' + k, GANHO.verde, 'dia com fruta e verdura');
+    if (k < t && k >= addDays(t, -7) && dayOnTarget(k)) earn('meta:' + k, GANHO.meta, 'dia na meta de calorias');
+  });
+  const give = id => { if (!S.room.items[id]){ S.room.items[id] = t; got.push(id); earn('marco:' + id, GANHO.marco, 'conquista'); } };
+  if (gymCount() >= 1) give('tenis');
+  if (gymCount() >= 5) give('halteres');
+  if (Object.keys(S.sleep).length >= 7) give('estrelas');
+  if (streak() >= 7) give('luzinhas');
+  const ym = monthKey(t);
+  if (S.onboarded && monthInfo(ym).won && !S.mimos[ym]){ S.mimos[ym] = {won:t, escolha:null, entregue:false}; got.push('@mimo'); }
+  return got;
+}
+function allDayKeys(){ return Array.from(new Set(Object.keys(S.days).concat(Object.keys(S.sleep)))).sort(); }
+function afterChange(){
+  const got = settle();
+  save(); render(); const coins = flushCoins();
+  got.forEach((id, i) => setTimeout(() => {
+    if (id === '@mimo'){ confetti(); openMimo(monthKey(today())); }
+    else { toast('Conquista! ' + ITENS[id].n + ' no seu quarto'); confetti(); }
+  }, 900 + i * 1600));
+  return coins;
+}
+
+/* caixinha do dia */
+function boxReady(){ const d = S.days[today()]; return S.onboarded && isActive(today()) && !(d && d.box); }
+function nextCurio(){
+  const seen = new Set(S.seen.curio);
+  const order = CURIOSIDADES.map((_, i) => i).sort((a, b) => hash('c' + a + S.start) - hash('c' + b + S.start));
+  const i = order.find(x => !seen.has(x));
+  if (i === undefined){ S.seen.curio = []; return order[0]; }
+  return i;
+}
+function nextCat(){ const seen = new Set(S.seen.cat); let i = CATOLICO.findIndex((_, j) => !seen.has(j)); if (i < 0){ S.seen.cat = []; i = 0; } return i; }
+function openBox(){
+  if (!boxReady()) return;
+  const n = S.boxes, d = getDay(today(), true), r = {};
+  const freeItem = ORDEM_CAIXA.find(id => !S.room.items[id]);
+  if (n % 5 === 4){
+    const ci = nextCat(); S.seen.cat.push(ci); r.cat = ci;
+    const catsSoFar = S.cards.filter(c => c.type === 'cat').length;
+    const ci2 = ORDEM_CAT.find(id => !S.room.items[id]);
+    if (ci2 && catsSoFar % 2 === 0){ S.room.items[ci2] = today(); r.item = ci2; }
+    S.cards.push({type:'cat', i:ci, d:today()});
+  } else if (n % 2 === 0 && freeItem){
+    S.room.items[freeItem] = today(); r.item = freeItem;
+  } else {
+    const c = nextCurio(); S.seen.curio.push(c); r.curio = c;
+    S.cards.push({type:'curio', i:c, d:today()});
+  }
+  r.coins = GANHO.caixinha + (hash(today()) % 3) * 5;
+  earn('box:' + today(), r.coins, '');
+  pendingCoins.length = 0;
+  S.boxes++; d.box = r;
+  save(); render(); showReveal(r); confetti();
+}
+
+/* ===================================================================== pixel art: boneco em camadas */
+// Cada molde tem 16 colunas (espelhado) ou 32 (como está). y = linha inicial.
+const T = (y, rows) => ({y, rows});
+const BODY = T(0, [
+  '................','................','................','................','................','................',
+  '................','...........SSSSS','..........SSSSSS','..........SSSSSS','..........SbbbSS','..........SSSSSS',
+  '..........SKKKSS','..........SwEESS','..........SSSSSs','..........SBBSSs','..........SSSSSS','..........SSSSLL',
+  '...........SSSSS','............SSSS','.............sSS','.............SSS','.........SSSSSSS','.........SSSSSSS',
+  '.........SSSSSSS','.........SSSSSSS','.........SSSSSSS','.........SSSSSSS','.........SSSSSSS','.........SSSSSSS',
+  '.........SSSSSSS','.........SSSSSSS','.........SSSSSSS','.........SSSSSSS','.........ssSSSSS','..........SSSSSS',
+  '..........SSSSS.','..........SSSS..','..........SSSS..','..........SSSS..','..........SSSS..','..........SSSS..',
+  '..........SSSS..','..........SSSS..','..........SSS...','................','................','................'
+]);
+// cabelo solto (o mesmo do rascunho aprovado)
+const HAIR_SOLTO = [
+  '................','................','...........HHHHH','.........HHHHHHH','........HHHHhhHH','.......HHHhHHHHH',
+  '.......HHHHHHHHH','......HHHHHHHH..','......HHHHHH....','......HHHHH.....','.....HHHHH......','.....HHHHH......',
+  '.....HHHHH......','.....HHHHH......','.....HHHHH......','.....HHHHH......','.....HHHHH......','.....HHHHH......',
+  '.....HHHHHH.....','.....HHHHHHH....','....HHHHHHHHH...','....HHHHHHHHH...','....HHHHH.......','....HHHHH.......',
+  '....HHHHH.......','...HHHHhH.......','...HHHHHH.......','...HHHHHH.......','....HHHHH.......','....HHHHH.......',
+  '....HHhHH.......','.....HHHH.......','.....H.H........'
+];
+const CAP = T(3, ['..........HHHHHH','........HHHHHHHH','.......HHHHhHHHH','.......HHHHHHHHH','........HHHHHH..','.........HHH....','.........HH.....','.........H......']);
+function rows32(y0, y1, fill){ const rows = []; for (let y = y0; y <= y1; y++){ const r = Array(32).fill('.'); fill(r, y); rows.push(r.join('')); } return T(y0, rows); }
+const TAIL = rows32(4, 27, (r, y) => { const [a, b] = y < 7 ? [21, 23] : y < 12 ? [22, 25] : y < 24 ? [23, 25] : [23, 24]; for (let x = a; x <= b; x++) r[x] = (x + y) % 5 === 0 ? 'h' : 'H'; });
+const BRAID = rows32(9, 33, (r, y) => { if (y < 15){ r[8] = 'H'; r[9] = 'H'; return; } if (y === 30){ r[9] = 'G'; r[10] = 'G'; return; } const a = y > 30 ? 9 : 8, b = y > 30 ? 10 : 10; for (let x = a; x <= b; x++) r[x] = (x + y) % 2 ? 'H' : 'h'; });
+function curly(){
+  const half = HAIR_SOLTO.slice(0, 27).map(r => r.split(''));
+  half.forEach((row, y) => { if (y < 3) return; const L = row.indexOf('H'); if (L > 0 && y % 3 !== 1) row[L - 1] = 'H'; if (L > 1 && y % 3 === 0 && y > 8) row[L - 2] = 'H'; });
+  half.forEach((row, y) => row.forEach((c, x) => { if (c === 'H' && (x * 3 + y * 5) % 7 === 0) row[x] = 'h'; }));
+  half.push('.....H.H.H......'.split(''));
+  return T(0, half.map(r => r.join('')));
+}
+const HAIR = {
+  solto:T(0, HAIR_SOLTO),
+  franja:[T(0, HAIR_SOLTO), T(6, ['......HHHHHHHHHH','......HHHHHHHHHH','......HHHHHHhHHH','......HHHHHHHHhH','......HHHHH.H.H.'])],
+  cacheado:curly(),
+  rabo:[CAP, TAIL],
+  tranca:[CAP, BRAID],
+  curto:T(0, HAIR_SOLTO.slice(0, 18).concat(['.....HHHHHH.....','......HHHHH.....','.......H.H......'])),
+  coque:T(0, ['.............HHH','............HHhH','.............HHH','..........HHHHHH','........HHHHHHHH','.......HHHHhHHHH',
+    '.......HHHHHHHHH','........HHHHHH..','.........HHH....','.........HH.....','.........H......'])
+};
+const TOPS = {
+  tee:T(22, ['.........AAAA...','.........AAAAA..','.........AAAAAAA','.........aAAAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........aaaaa']),
+  regata:T(23, ['...........A....','...........AA...','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........aaaaa']),
+  cropped:T(22, ['.........AAA....','.........AAAAA..','.........aAAAAAA','...........AAAAA','...........AAAAA','...........AAAAA','...........aaaaa']),
+  halter:T(23, ['...........AA...','...........AAA..','...........AAAA.','...........AAAAA','...........AAAAA','...........AAAaA','...........AAAAa','...........AAAAA','...........AAAAA','...........aaaaa']),
+  moletom:T(22, ['.........AAAAA..','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAAAAAA','.........AAaaaaa','.........aa.....']),
+  blazer:T(22, ['.........AAAA...','.........AAAAa..','.........AAAAAa.','.........AAAAAAa','.........AAAAAAa','.........AAAAAAa','.........AAAAAAa','.........AAAAAAa','.........AAAAAAa','.........AAAAAAa','.........AAaaaaa','.........aa.....'])
+};
+const SKIRT_V = ['...........AAAAA','..........AAAAAA','..........AAAAAA','.........AAAAAAA','.........AAAAAAA','........AAAAAAAA','........aaaaaaaa'];
+const FULLS = {
+  vestido:T(23, TOPS.halter.rows.slice(0, 9).concat(SKIRT_V)),
+  longo:T(23, TOPS.halter.rows.slice(0, 9).concat(['...........AAAAA','..........AAAAAA','..........AAAAAA','.........AAAAAAA','.........AAAAAAA','........AAAAAAAA','........AAAAAAAA','........AAAAAAAA','.......AAAAAAAAA','.......AAAAAAAAA','.......aaaaaaaaa']))
+};
+const BOTTOMS = {
+  calca:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','.........DDDDDDd','.........DDDDDd.','.........DDDDDd.','........DDDDDDd.','........DDDDDDd.','........DDDDDDd.','........DDDDDDd.','........ddddddd.']),
+  skinny:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','..........DDDDd.','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........DDDd..','..........dddd..']),
+  short:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','..........dddd..']),
+  saia:T(33, ['...........DDDDD','...........DDDDD','..........DDDDDD','.........DDDDDDD','.........DDDDDDD','........dddddddd'])
+};
+const SHOES = {
+  tenis:T(44, ['..........FFF...','.........FFFFf..']),
+  sandalia:T(45, ['.........FfFF...']),
+  bota:T(40, ['..........FFFF..','..........FFFF..','..........FFFF..','..........FFFF..','..........FFFF..','.........FFFFf..'])
+};
+const ACCS = {
+  colar:T(21, ['.............c..','..............c.','...............c']),
+  oculos:T(12, ['..........KKKKKK','..........KQQQQK']),
+  chapeu:T(1, ['................','...........ZZZZZ','..........ZZZZZZ','..........ZZZZZZ','..........zzzzzz','...ZZZZZZZZZZZZZ','.....ZZZZZ......']),
+  laco:T(2, ['....................XX..XX......','....................XXXXXX......','....................XX..XX......']),
+  brinco:T(16, ['.........G......','.........G......']),
+  pulseira:T(33, ['.........GG.....................']),
+  tiara:T(5, ['........VVVVVVVV'])
+};
+const roupa = id => { const r = ROUPAS.find(x => x[0] === id); return r ? {id:r[0], parte:r[1], estilo:r[2], cor:r[3], n:r[4], preco:r[5]} : null; };
+function full32(r){ return r.length === 32 ? r : r + r.split('').reverse().join(''); }
+function paint(g, tpl, filter){ if (Array.isArray(tpl)){ tpl.forEach(t => paint(g, t, filter)); return; } tpl.rows.forEach((r, i) => { const row = full32(r), y = tpl.y + i; if (!g[y]) return; for (let x = 0; x < 32; x++){ const c = row[x]; if (c !== '.' && (!filter || filter(g[y][x]))) g[y][x] = c; } }); }
+const avCache = {};
+function composeAvatar(look, wear, blink){
+  const key = JSON.stringify([look, wear, blink]);
+  if (avCache[key]) return avCache[key];
+  const g = Array.from({length:48}, () => Array(32).fill('.'));
+  paint(g, BODY);
+  const full = wear.full && roupa(wear.full);
+  const pal = {S:look.pele, s:shade(look.pele, -.16), B:look.blush === 'nao' ? look.pele : mix(look.pele, '#E0605A', .35), H:look.cabelo, h:shade(look.cabelo, .18), b:mix(look.cabelo, '#2A1A16', .5), K:'#2A1A16', w:'#F7F1EA', E:look.olhos || '#3A2318', L:!look.batom || look.batom === 'natural' ? mix('#B0475A', look.pele, .15) : look.batom, G:'#D4A537', V:roupa('tiara').cor, O:'#3A2622', c:'#D5DAE2', Q:'#2B2B35', Z:'#E8D6A8', z:'#2A2A2A'};
+  const usePal = (r, A, a) => { if (r){ pal[A] = r.cor; pal[a] = shade(r.cor, r.cor.toLowerCase() > '#d0' ? -.14 : -.22); } };
+  if (full){ usePal(full, 'A', 'a'); paint(g, FULLS[full.estilo]); }
+  else {
+    const b = roupa(wear.bottom || 'calca_cinza'), t = roupa(wear.top || 'tee_branca');
+    pal.D = b.cor; pal.d = shade(b.cor, -.18); paint(g, BOTTOMS[b.estilo]);
+    usePal(t, 'A', 'a'); paint(g, TOPS[t.estilo]);
+  }
+  const sh = roupa(wear.shoes || 'tenis_branco'); pal.F = sh.cor; pal.f = shade(sh.cor, -.2);
+  if (sh.estilo === 'sandalia') pal.f = sh.cor; paint(g, SHOES[sh.estilo]);
+  paint(g, HAIR[look.penteado] || HAIR.solto);
+  const acc = wear.acc || {};
+  if (acc.colar_ana) paint(g, ACCS.colar);
+  if (acc.oculos) paint(g, ACCS.oculos);
+  if (acc.laco){ pal.X = roupa('laco').cor; paint(g, ACCS.laco); }
+  if (acc.brinco) paint(g, ACCS.brinco);
+  if (acc.pulseira) paint(g, ACCS.pulseira);
+  if (acc.tiara && !acc.chapeu) paint(g, ACCS.tiara);
+  if (acc.chapeu) paint(g, ACCS.chapeu);
+  if (blink && !acc.oculos){ for (let x = 10; x < 22; x++){ if (g[12][x] === 'K') g[12][x] = 'S'; if (g[13][x] === 'w' || g[13][x] === 'E') g[13][x] = 'K'; } }
+  const out = g.map(r => r.slice());
+  for (let y = 0; y < 48; y++) for (let x = 0; x < 32; x++){
+    if (g[y][x] !== '.') continue;
+    if ([[1,0],[-1,0],[0,1],[0,-1]].some(([dx, dy]) => { const yy = y + dy, xx = x + dx; return yy >= 0 && yy < 48 && xx >= 0 && xx < 32 && g[yy][xx] !== '.'; })) out[y][x] = 'O';
+  }
+  return (avCache[key] = {g:out, pal});
+}
+function blitAv(ctx, av, ox, oy, k, crop){
+  const [x0, y0, x1, y1] = crop || [0, 0, 32, 48];
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++){ const c = av.g[y][x]; if (c === '.') continue; ctx.fillStyle = av.pal[c]; ctx.fillRect((ox + x - x0) * k, (oy + y - y0) * k, k, k); }
+}
+function drawBust(cv, look, wear){
+  if (!cv) return; const k = 4; cv.width = 24 * k; cv.height = 24 * k;
+  const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height);
+  blitAv(ctx, composeAvatar(look || S.look, wear || S.wear, false), 0, 1, k, [4, 1, 28, 25]);
+}
+function drawFull(cv, look, wear, k){
+  if (!cv) return; k = k || 6; cv.width = 32 * k; cv.height = 48 * k; cv.style.width = (32 * k / 2) + 'px'; cv.style.height = (48 * k / 2) + 'px';
+  const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height);
+  blitAv(ctx, composeAvatar(look, wear, false), 0, 0, k);
+}
+// colar ANA em close
+function drawNecklace(cv, broken){
+  const k = 8, W = 40, H = 16; cv.width = W * k; cv.height = H * k; cv.style.width = (W * k / 2) + 'px'; cv.style.height = (H * k / 2) + 'px';
+  const ctx = cv.getContext('2d'); ctx.fillStyle = '#2E3170'; ctx.fillRect(0, 0, cv.width, cv.height);
+  const P = (x, y, c) => { ctx.fillStyle = c; ctx.fillRect(x * k, y * k, k, k); };
+  for (let x = 0; x < 10; x++){ const c = x % 2 ? '#8E96A3' : '#D5DAE2'; P(39 - x, x, c); if (!broken || x < 4) P(x, x, c); }
+  if (broken){ [[4, 5], [4, 6], [5, 7], [4, 8], [5, 9]].forEach(([x, y], i) => P(x, y, i % 2 ? '#8E96A3' : '#D5DAE2')); P(8, 9, '#8E96A3'); }
+  else { [[4, 2], [6, 3], [5, 6], [3, 5]].forEach(([x, y]) => P(x, y, '#FFF6B0')); }
+  const A = ['.ccc.','c...c','c...c','ccccc','c...c','c...c'], N = ['c...c','cc..c','c.c.c','c..cc','c...c','c...c'];
+  [A, N, A].forEach((L, i) => L.forEach((row, yy) => row.split('').forEach((ch, xx) => { if (ch === 'c') P(9 + i * 8 + xx, 9 + yy, '#D5DAE2'); })));
+  [14, 15, 16, 22, 23, 24].forEach(x => P(x, 12, '#8E96A3'));
+  [[10, 9], [27, 9], [19, 10]].forEach(([x, y]) => P(x, y, '#FFFFFF'));
+}
+
+/* ===================================================================== quarto */
+const RW = 128, RH = 96;
+function roomScale(cv){ const w = cv.parentElement.clientWidth || 340; return Math.max(2, Math.floor(w * (window.devicePixelRatio || 1) / RW)); }
+function drawRoom(cv, frame){
+  const k = cv._k || (cv._k = roomScale(cv));
+  if (cv.width !== RW * k){ cv.width = RW * k; cv.height = RH * k; }
+  const ctx = cv.getContext('2d');
+  const P = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x * k, y * k, w * k, h * k); };
+  const has = id => !!S.room.items[id];
+  const hr = new Date().getHours(), night = hr >= 19 || hr < 6, dusk = hr >= 17 && hr < 19;
+  P(0, 0, RW, 66, '#F1E2D0'); for (let x = 0; x < RW; x += 8) P(x, 0, 1, 66, '#EAD7C2');
+  P(0, 62, RW, 4, '#E2CBB2'); P(0, 66, RW, 2, '#B98F6B');
+  P(0, 68, RW, 28, '#C9A27E');
+  for (let y = 68; y < RH; y += 6){ P(0, y, RW, 1, '#B98F6B'); for (let x = (y / 6 % 2) * 12; x < RW; x += 24) P(x, y, 1, 6, '#B98F6B'); }
+  // janela
+  const sky = night ? '#26285C' : dusk ? '#F2A65A' : '#9FD3F0';
+  P(16, 10, 26, 24, '#FFFFFF'); P(18, 12, 22, 20, sky);
+  if (night){ P(33, 15, 4, 4, '#F5F0C8'); P(34, 15, 3, 3, sky); P(22, 16, 1, 1, '#fff'); P(27, 26, 1, 1, '#fff'); P(37, 27, 1, 1, '#fff'); }
+  else if (dusk) P(30, 24, 6, 6, '#FFD27A');
+  else { P(32, 15, 5, 5, '#FFE27A'); P(21, 22, 8, 3, '#fff'); P(23, 20, 4, 2, '#fff'); }
+  P(28, 12, 2, 20, '#FFFFFF'); P(18, 21, 22, 2, '#FFFFFF'); P(15, 34, 28, 2, '#E2CBB2');
+  // mudinha da janela: cresce com pratos equilibrados
+  const st = balancedLast7();
+  P(19, 30, 6, 4, '#B4643C'); P(19, 30, 6, 1, '#C97A50');
+  if (st >= 0){ P(21, 27, 1, 3, '#3E7D45'); P(20, 27, 1, 1, '#5BB065'); P(22, 26, 1, 1, '#5BB065'); }
+  if (st >= 3){ P(21, 23, 1, 4, '#3E7D45'); P(19, 24, 2, 1, '#4E9A55'); P(22, 23, 2, 1, '#4E9A55'); P(20, 21, 3, 2, '#5BB065'); }
+  if (st >= 6){ P(20, 19, 3, 2, '#F28DB2'); P(21, 18, 1, 1, '#FFE27A'); P(23, 22, 2, 2, '#F28DB2'); }
+  // passarinho: aparece quando ela come bem
+  const t = today();
+  if (!night && (verdeDay(t) || dayOnTarget(addDays(t, -1)) || balanced(S.days[t], 'almoco'))){
+    const hop = frame && (frame >> 3) % 6 === 0 ? 1 : 0;
+    P(34, 30 - hop, 4, 3, '#E8853D'); P(37, 30 - hop, 1, 1, '#2A1A16'); P(38, 31 - hop, 1, 1, '#F4D35E'); P(33, 31 - hop, 1, 1, '#C96A2A'); P(35, 33 - hop, 1, 1, '#8D5A3B');
+  }
+  if (has('cortina')){ P(12, 8, 34, 2, '#B98F6B'); P(12, 10, 6, 28, '#E8A0A8'); P(13, 10, 1, 28, '#D88892'); P(40, 10, 6, 28, '#E8A0A8'); P(44, 10, 1, 28, '#D88892'); }
+  if (has('luzinhas')){ for (let x = 4; x < 124; x += 2) P(x, 3 + Math.round(Math.sin(x / 6) * 1.5), 1, 1, '#7a6a5a'); const cols = ['#FFD54F','#FF8A80','#80D8FF','#B9F6CA']; for (let i = 0, x = 6; x < 122; x += 8, i++){ const y = 4 + Math.round(Math.sin(x / 6) * 1.5); const on = !frame || (i + (frame >> 3)) % 3 !== 0; P(x, y, 2, 2, on ? cols[i % 4] : '#d9cfc4'); } }
+  if (has('estrelas')) [[52,6],[60,12],[70,5],[80,22],[112,6],[120,12],[100,4]].forEach(([x, y]) => { const c = night ? '#FFF6B0' : '#F7E9A8'; P(x, y, 1, 3, c); P(x - 1, y + 1, 3, 1, c); });
+  if (has('relogio')){ P(80, 10, 9, 9, '#5B4636'); P(81, 11, 7, 7, '#FFF8EC'); P(84, 12, 1, 3, '#2a1a16'); P(84, 14, 2, 1, '#2a1a16'); }
+  if (has('quadro_praia')){ P(56, 7, 18, 12, '#8D6E52'); P(57, 8, 16, 10, '#9FD3F0'); P(57, 14, 16, 4, '#2F7FB5'); P(57, 16, 16, 2, '#F2D9A0'); P(68, 9, 3, 3, '#FFE27A'); }
+  if (has('quadro')){ P(94, 16, 22, 15, '#C9A030'); P(95, 17, 20, 13, '#FDF6E3'); P(99, 22, 3, 3, '#E57373'); P(104, 20, 3, 3, '#F4D35E'); P(109, 23, 3, 3, '#BA68C8'); P(100, 25, 1, 4, '#4E8A4E'); P(105, 23, 1, 6, '#4E8A4E'); P(110, 26, 1, 3, '#4E8A4E'); }
+  if (has('chapeu')){ P(118, 36, 9, 2, '#E8D6A8'); P(120, 33, 5, 3, '#E8D6A8'); P(120, 35, 5, 1, '#2a2a2a'); }
+  if (has('prateleira') || has('santa') || has('vela') || has('livros') || has('caneca')){
+    P(52, 30, 24, 2, '#8D6E52'); P(54, 32, 2, 3, '#6E5440'); P(72, 32, 2, 3, '#6E5440');
+    if (has('livros')){ P(54, 23, 2, 7, '#8B3A62'); P(56, 24, 2, 6, '#4B4FA8'); P(58, 22, 2, 8, '#2E7D4F'); P(60, 25, 2, 5, '#F4D35E'); }
+    if (has('santa')){ P(65, 20, 3, 2, '#F7E9D7'); P(64, 22, 5, 8, '#5B8FD0'); P(65, 23, 3, 6, '#F7F2EA'); P(66, 21, 1, 1, '#c88b62'); P(64, 18, 5, 1, '#F4D35E'); }
+    if (has('vela')){ P(70, 26, 3, 4, '#FFF3D6'); P(71, 24, 1, 2, frame && (frame >> 2) % 2 ? '#FFB74D' : '#FFD54F'); }
+    if (has('caneca')){ P(74, 26, 4, 4, '#F4D35E'); P(78, 27, 1, 2, '#F4D35E'); }
+  }
+  if (has('terco')){ for (let i = 0; i < 9; i++){ const a = Math.PI * (0.15 + i * 0.09); P(Math.round(47 + Math.cos(a) * 4), Math.round(14 + Math.sin(a) * 9), 1, 1, '#8D5A3B'); } P(46, 24, 1, 5, '#C9A030'); P(45, 25, 3, 1, '#C9A030'); }
+  if (has('espelho')){ P(2, 26, 10, 42, '#C9A030'); P(3, 24, 8, 2, '#C9A030'); P(4, 23, 6, 1, '#C9A030'); P(3, 27, 8, 40, '#D9EEF2'); P(4, 25, 6, 2, '#D9EEF2'); P(5, 30, 1, 10, '#fff'); P(6, 29, 1, 4, '#fff'); }
+  // cama
+  P(88, 46, 36, 4, '#8D6E52'); P(88, 50, 3, 30, '#8D6E52'); P(121, 50, 3, 30, '#8D6E52');
+  P(90, 60, 34, 14, '#F4F0EA'); P(90, 64, 34, 10, '#8B3A62'); P(90, 64, 34, 2, '#A3527A'); P(90, 74, 34, 6, '#6E5440'); P(93, 55, 12, 6, '#FFFFFF');
+  if (has('almofada')){ P(106, 54, 9, 7, '#F4D35E'); P(107, 55, 7, 1, '#FFE58A'); }
+  if (has('pelucia')){ P(116, 56, 6, 6, '#B07A50'); P(116, 55, 2, 2, '#B07A50'); P(120, 55, 2, 2, '#B07A50'); P(118, 58, 2, 1, '#2a1a16'); P(117, 59, 4, 3, '#D9A97B'); }
+  if (has('tapete')){ P(36, 84, 48, 9, '#E8A0A8'); P(34, 86, 52, 5, '#E8A0A8'); P(38, 86, 44, 5, '#F2C4C9'); for (let x = 40; x < 82; x += 6) P(x, 88, 2, 1, '#E8A0A8'); }
+  if (has('planta')){ P(20, 58, 8, 10, '#B4643C'); P(19, 57, 10, 2, '#C97A50'); P(23, 46, 2, 11, '#3E7D45'); P(18, 48, 5, 3, '#4E9A55'); P(25, 44, 5, 3, '#4E9A55'); P(17, 52, 6, 3, '#3E7D45'); P(25, 50, 6, 3, '#3E7D45'); P(22, 42, 3, 4, '#5BB065'); }
+  if (has('pampas')){ P(32, 58, 6, 10, '#EDE3D3'); P(33, 57, 4, 1, '#D8CBB6'); [[30,40],[34,36],[38,40],[28,46],[40,46]].forEach(([x, y]) => { P(x + 2, y + 4, 1, 54 - y, '#BFA77F'); P(x, y, 5, 6, '#E9D9B8'); P(x + 1, y - 1, 3, 2, '#F2E7CF'); }); }
+  if (has('luminaria')){ P(78, 34, 9, 6, '#F4D35E'); P(77, 39, 11, 1, '#E0BA3A'); P(82, 40, 1, 26, '#5B4636'); P(79, 66, 7, 2, '#5B4636'); if (night){ ctx.globalAlpha = .18; P(70, 40, 25, 26, '#FFE58A'); ctx.globalAlpha = 1; } }
+  if (has('girassol')){ P(4, 84, 7, 7, '#5B8FB0'); P(7, 72, 1, 12, '#3E7D45'); P(5, 77, 2, 1, '#4E9A55'); P(5, 68, 5, 5, '#F4C430'); P(6, 69, 3, 3, '#7A4B1E'); }
+  if (has('tenis')){ P(64, 89, 7, 3, '#FFFFFF'); P(64, 91, 7, 1, '#8B3A62'); P(72, 90, 7, 3, '#FFFFFF'); P(72, 92, 7, 1, '#8B3A62'); }
+  if (has('halteres')){ P(98, 86, 2, 4, '#4B4FA8'); P(100, 87, 6, 2, '#777'); P(106, 86, 2, 4, '#4B4FA8'); P(102, 91, 2, 4, '#4B4FA8'); P(104, 92, 6, 2, '#777'); P(110, 91, 2, 4, '#4B4FA8'); }
+  if (has('gato')){ const tail = frame && (frame >> 2) % 4 < 2; P(24, 84, 8, 6, '#E8A55A'); P(24, 80, 6, 5, '#E8A55A'); P(24, 79, 2, 2, '#E8A55A'); P(28, 79, 2, 2, '#E8A55A'); P(25, 82, 1, 1, '#2A1A16'); P(28, 82, 1, 1, '#2A1A16'); P(26, 86, 4, 1, '#C9823F'); P(32, tail ? 83 : 85, 2, 4, '#E8A55A'); }
+  const blink = frame && (frame % 90) > 85;
+  ctx.globalAlpha = .15; P(46, 90, 22, 2, '#000'); ctx.globalAlpha = 1;
+  blitAv(ctx, composeAvatar(S.look, S.wear, blink), 41, 44, k);
+}
+function drawGift(cv, open, k){
+  k = k || 4; cv.width = 16 * k; cv.height = 16 * k;
+  const ctx = cv.getContext('2d'); const P = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x * k, y * k, w * k, h * k); };
+  P(2, 7, 12, 8, '#8B3A62'); P(2, 7, 12, 1, '#A3527A'); P(7, 7, 2, 8, '#F4D35E');
+  if (open){ P(1, 2, 14, 3, '#A3527A'); P(7, 2, 2, 3, '#F4D35E'); P(4, 0, 2, 2, '#F4D35E'); P(10, 0, 2, 2, '#F4D35E'); }
+  else { P(1, 4, 14, 3, '#A3527A'); P(7, 4, 2, 3, '#F4D35E'); P(5, 2, 2, 2, '#F4D35E'); P(9, 2, 2, 2, '#F4D35E'); }
+}
+let animId = 0, frame = 0;
+function animate(){
+  cancelAnimationFrame(animId);
+  const cv = $('#roomCv'); if (!cv) return;
+  drawRoom(cv, 0);
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let last = 0;
+  const loop = t => { if (!document.body.contains(cv)) return; if (t - last > 100){ last = t; frame++; drawRoom(cv, frame); } animId = requestAnimationFrame(loop); };
+  animId = requestAnimationFrame(loop);
+}
+
+/* ===================================================================== interface */
+let tab = 'hoje', foodDay = null;
+const TABS = [['hoje','Hoje','sun'],['comida','Comida','leaf'],['treino','Treino','dumbbell'],['corpo','Corpo','body'],['quarto','Quarto','house']];
+
+function render(){
+  const app = $('#app');
+  if (!S.onboarded){ document.body.classList.add('ob'); $('#tabs').innerHTML = ''; app.innerHTML = obHTML(); obAfter(); return; }
+  document.body.classList.remove('ob');
+  $('#tabs').innerHTML = '<div class="tabs-in">' + TABS.map(t => `<button class="tab ${tab === t[0] ? 'on' : ''}" data-a="tab" data-t="${t[0]}" ${tab === t[0] ? 'aria-current="page"' : ''}>${ic(t[2])}<span>${t[1]}</span>${t[0] === 'quarto' && boxReady() ? '<i class="dot" aria-label="caixinha pronta"></i>' : ''}</button>`).join('') + '</div>';
+  const body = {hoje:hojeHTML, comida:comidaHTML, treino:treinoHTML, corpo:corpoHTML, quarto:quartoHTML}[tab]();
+  app.innerHTML = topHTML() + '<main class="wrap">' + body + '</main>';
+  drawBust($('#bustT'));
+  $$('#app canvas[data-gift]').forEach(c => drawGift(c, c.dataset.gift === 'open'));
+  if (tab === 'quarto') animate(); else cancelAnimationFrame(animId);
+}
+function topHTML(){
+  const s = streak();
+  return `<header class="top"><div class="wrap"><div class="top-in">
+    <div class="bust"><canvas id="bustT" aria-hidden="true"></canvas></div>
+    <div class="hello"><b>Oi, ${esc(S.name)}</b><span>${fmtD(today(), {weekday:'long', day:'numeric', month:'long'})}</span></div>
+    <button class="icon-btn" data-a="settings" aria-label="Ajustes">${ic('gear')}</button>
+  </div>
+  <div class="stats">
+    <div class="stat">${ic('flame')} ${s} ${s === 1 ? 'dia' : 'dias'}</div>
+    <button class="stat coin" data-a="wardrobe" aria-label="${S.coins} moedas, abrir loja">${ic('coin')} ${S.coins}</button>
+  </div></div></header>`;
+}
+
+/* ---------- CADASTRO ---------- */
+let ob = {step:0, data:null};
+function obInit(){ if (!ob.data) ob.data = {name:S.name || '', idade:'', altura:'', peso:'', cintura:'', quadril:'', ativ:1.375, ritmo:300, look:Object.assign({}, S.look)}; }
+function obHTML(){
+  obInit(); const d = ob.data, st = ob.step;
+  const steps = `<div class="ob-steps" aria-label="Passo ${st + 1} de 4">${[0,1,2,3].map(i => `<i class="${i <= st ? 'on' : ''}"></i>`).join('')}</div>`;
+  let body = '', foot = '';
+  if (st === 0){
+    body = `<div class="bust welcome-bust"><canvas id="obBust" aria-hidden="true"></canvas></div>
+      <h1 class="center">Passinho</h1>
+      <p class="muted center" style="margin:8px 0 20px">Um passinho de cada vez: sono, comida e movimento.<br>Uma coisinha por dia já vale o dia.</p>
+      <label class="f" for="obName">Como você quer ser chamada?</label>
+      <input class="in" id="obName" autocomplete="given-name" placeholder="Seu nome" maxlength="30" value="${esc(d.name)}">`;
+    foot = `<button class="btn full" data-a="obNext">Começar</button>`;
+    body += `<button class="link" style="display:block;margin:12px auto 0" data-a="import">Já tenho um backup</button>`;
+  } else if (st === 1){
+    body = `<h1>Sobre você</h1><p class="muted" style="margin-top:6px">Serve para calcular uma meta aproximada de calorias. Fica só no seu celular.</p>
+      <div class="grid2" style="margin-top:6px">
+        <div><label class="f" for="obIdade">Idade</label><input class="in" id="obIdade" inputmode="numeric" value="${esc(d.idade)}" placeholder="anos"></div>
+        <div><label class="f" for="obAltura">Altura (cm)</label><input class="in" id="obAltura" inputmode="numeric" value="${esc(d.altura)}" placeholder="ex.: 160"></div>
+        <div><label class="f" for="obPeso">Peso (kg)</label><input class="in" id="obPeso" inputmode="decimal" value="${esc(d.peso)}" placeholder="ex.: 62,5"></div>
+        <div><label class="f" for="obCintura">Cintura (cm)</label><input class="in" id="obCintura" inputmode="decimal" value="${esc(d.cintura)}" placeholder="opcional"></div>
+        <div><label class="f" for="obQuadril">Quadril (cm)</label><input class="in" id="obQuadril" inputmode="decimal" value="${esc(d.quadril)}" placeholder="opcional"></div>
+      </div>
+      <p class="f">Hoje você se mexe...</p><div class="opt">${ATIV.map(a => `<button class="${d.ativ === a[0] ? 'on' : ''}" data-a="obAtiv" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>
+      <p class="f">Seu objetivo</p><div class="opt">${RITMO.map(a => `<button class="${d.ritmo === a[0] ? 'on' : ''}" data-a="obRitmo" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>`;
+    foot = `<button class="btn ghost" data-a="obBack">Voltar</button><button class="btn grow" data-a="obNext">Continuar</button>`;
+  } else if (st === 2){
+    body = `<h1>Monte você</h1><p class="muted" style="margin-top:6px">Dá para mudar quando quiser no guarda-roupa.</p>
+      <div class="avatar-big"><canvas id="obAv" aria-label="Seu boneco"></canvas></div>
+      ${lookEditorHTML(d.look, 'ob')}`;
+    foot = `<button class="btn ghost" data-a="obBack">Voltar</button><button class="btn grow" data-a="obNext">Continuar</button>`;
+  } else {
+    const t = previewTargets();
+    body = `<h1>Tudo pronto, ${esc(d.name)}!</h1>
+      <section class="card"><h3>Sua meta aproximada</h3><p style="margin-top:6px"><b style="font-size:1.4rem">${nf0.format(t.kcal)} kcal</b> por dia</p>
+      <p class="small muted" style="margin-top:6px">Proteína perto de ${t.prot} g. É uma estimativa, não precisa ser exata. Se você tiver nutricionista, ajuste em Corpo.</p></section>
+      <section class="card"><h3>Como funciona</h3><ul class="list small">
+        <li>${ic('check')} Uma missão por dia já vale o dia.</li>
+        <li>${ic('coin')} Missões, pratos equilibrados e caixinhas dão moedas para a loja.</li>
+        <li>${ic('gift')} Metade dos dias do mês com missão = mimo do ${esc(QUEM_DA_O_MIMO)}.</li></ul></section>
+      <p class="center muted small">Tem um presente esperando por você...</p>`;
+    foot = `<button class="btn ghost" data-a="obBack">Voltar</button><button class="btn sun grow" data-a="obFinish">${ic('gift')} Abrir presente</button>`;
+  }
+  return `<main class="wrap ob-wrap">${steps}<div class="ob-body">${body}</div><div class="ob-foot">${foot}</div></main>`;
+}
+function obAfter(){
+  const d = ob.data;
+  if (ob.step === 0) drawBust($('#obBust'), d.look, S.wear);
+  if (ob.step === 2) drawFull($('#obAv'), d.look, S.wear, 8);
+}
+function lookEditorHTML(look, ctx){
+  return `<p class="f">Pele</p><div class="chips">${PELES.map(c => `<button class="swatch ${look.pele === c ? 'on' : ''}" style="background:${c}" data-a="look" data-ctx="${ctx}" data-k="pele" data-v="${c}" aria-label="Tom de pele" aria-pressed="${look.pele === c}"></button>`).join('')}</div>
+    <p class="f">Cor do cabelo</p><div class="chips">${CABELOS.map(c => `<button class="swatch ${look.cabelo === c ? 'on' : ''}" style="background:${c}" data-a="look" data-ctx="${ctx}" data-k="cabelo" data-v="${c}" aria-label="Cor do cabelo" aria-pressed="${look.cabelo === c}"></button>`).join('')}</div>
+    <p class="f">Cabelo</p><div class="chips">${PENTEADOS.map(p => `<button class="chip ${look.penteado === p[0] ? 'on' : ''}" data-a="look" data-ctx="${ctx}" data-k="penteado" data-v="${p[0]}" aria-pressed="${look.penteado === p[0]}">${p[1]}</button>`).join('')}</div>
+    <p class="f">Olhos</p><div class="chips">${OLHOS.map(o => `<button class="swatch ${look.olhos === o[0] ? 'on' : ''}" style="background:${o[0]}" data-a="look" data-ctx="${ctx}" data-k="olhos" data-v="${o[0]}" aria-label="Olhos ${o[1]}" aria-pressed="${look.olhos === o[0]}"></button>`).join('')}</div>
+    <p class="f">Batom</p><div class="chips">${BATONS.map(o => `<button class="swatch ${look.batom === o[0] ? 'on' : ''}" style="background:${o[0] === 'natural' ? mix('#B0475A', look.pele, .15) : o[0]}" data-a="look" data-ctx="${ctx}" data-k="batom" data-v="${o[0]}" aria-label="Batom ${o[1]}" aria-pressed="${look.batom === o[0]}"></button>`).join('')}</div>
+    <p class="f">Bochecha rosada</p><div class="chips">${[['sim','Com'],['nao','Sem']].map(o => `<button class="chip ${look.blush === o[0] ? 'on' : ''}" data-a="look" data-ctx="${ctx}" data-k="blush" data-v="${o[0]}" aria-pressed="${look.blush === o[0]}">${o[1]}</button>`).join('')}</div>`;
+}
+function obRead(){
+  const d = ob.data, v = id => { const el = $('#' + id); return el ? el.value.trim() : undefined; };
+  if (ob.step === 0 && v('obName') !== undefined) d.name = v('obName');
+  if (ob.step === 1){ ['idade','altura','peso','cintura','quadril'].forEach(k => { const x = v('ob' + k[0].toUpperCase() + k.slice(1)); if (x !== undefined) d[k] = x; }); }
+}
+function previewTargets(){
+  const d = ob.data, peso = num(d.peso) || 65, alt = num(d.altura) || 160, idade = num(d.idade) || 28;
+  const tmb = 10 * peso + 6.25 * alt - 5 * idade - 161;
+  return {kcal:Math.max(1200, Math.round((tmb * d.ativ - d.ritmo) / 10) * 10), prot:Math.round(peso * 1.2)};
+}
+function obFinish(){
+  const d = ob.data;
+  S.name = d.name; S.start = today();
+  S.profile.idade = num(d.idade); S.profile.altura = num(d.altura); S.profile.ativ = d.ativ; S.profile.ritmo = d.ritmo;
+  S.look = Object.assign({}, d.look);
+  const m = {id:uid(), d:today(), peso:num(d.peso), cintura:num(d.cintura), quadril:num(d.quadril)};
+  if (m.peso != null || m.cintura != null || m.quadril != null) S.measures.push(m);
+  S.owned.colar_ana = 1; S.onboarded = true;
+  earn('boasvindas', GANHO.boasVindas, ''); pendingCoins.length = 0;
+  save(); render();
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch(e){}
+  openSheet('Um presente para você', `<div class="reveal"><p class="pix">PRESENTE DE BOAS-VINDAS</p>
+    <div style="margin:14px 0"><canvas id="neckCv" aria-label="Colar de prata escrito ANA"></canvas></div>
+    <div id="neckMsg" style="opacity:0;transition:opacity .6s"><p class="quote">${esc(MSG_COLAR.titulo)}</p>
+    <p>${esc(MSG_COLAR.texto)}</p><p class="sign" style="margin-top:6px">— ${esc(MSG_COLAR.assinatura)}</p>
+    <p class="muted small" style="margin-top:10px">E mais ${GANHO.boasVindas} moedas para começar.</p></div>
+    <button class="btn full" style="margin-top:16px" data-a="wearNecklace">Colocar o colar</button></div>`);
+  drawNecklace($('#neckCv'), true);
+  setTimeout(() => { const cv = $('#neckCv'); if (!cv) return; drawNecklace(cv, false); $('#neckMsg').style.opacity = 1; confetti(); }, 1200);
+}
+
+/* ---------- HOJE ---------- */
+function timeOpts(from, to, sel){
+  const out = []; let m = toMin(from); const end = toMin(to) + (toMin(to) <= toMin(from) ? 1440 : 0);
+  for (; m <= end; m += 15){ const mm = m % 1440, v = String(Math.floor(mm / 60)).padStart(2,'0') + ':' + String(mm % 60).padStart(2,'0'); out.push(`<option value="${v}" ${v === sel ? 'selected' : ''}>${v}</option>`); }
+  return out.join('');
+}
+let sleepQ = 2;
+function sleepFormHTML(k, rec){
+  const ks = Object.keys(S.sleep).sort(), lastRec = ks.length ? S.sleep[ks[ks.length - 1]] : null;
+  const b = rec ? rec.b : lastRec ? lastRec.b : '00:30', w = rec ? rec.w : lastRec ? lastRec.w : '07:00';
+  sleepQ = rec ? rec.q : 2;
+  return `<div class="grid2">
+      <div><label class="f" for="slB" style="color:#fff">Dormi mais ou menos às</label><select class="sel" id="slB">${timeOpts('19:00', '05:00', b)}</select></div>
+      <div><label class="f" for="slW" style="color:#fff">Acordei às</label><select class="sel" id="slW">${timeOpts('03:00', '14:00', w)}</select></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">E como acordou?</p>
+    <div class="q-row" role="group" aria-label="Como acordou">${['Cansada','Mais ou menos','Bem'].map((l, i) => `<button data-a="sleepQ" data-q="${i + 1}" class="${sleepQ === i + 1 ? 'on' : ''}" aria-pressed="${sleepQ === i + 1}">${l}</button>`).join('')}</div>
+    <button class="btn sun full" style="margin-top:14px" data-a="saveSleep" data-k="${k}">Salvar meu sono</button>`;
+}
+function hojeHTML(){
+  const t = today(), rec = S.sleep[t];
+  let h = '';
+  if (!rec) h += `<section class="card sleep-card"><div class="card-h"><h2>Bom dia! Como foi a noite?</h2>${ic('moon')}</div><p class="small muted">Só anotar já cumpre a missão do sono. Sem julgamento.</p>${sleepFormHTML(t, null)}</section>`;
+  h += `<div class="sec-t"><h2>Missões de hoje</h2><p>uma já vale o dia</p></div>`;
+  PILARES.forEach(p => {
+    const doneId = pillarDoneId(t, p.id), m = mis(doneId || S.pick[p.id]), done = !!doneId, d = S.days[t];
+    const extra = m.id === 'agua' ? `<div class="counter" style="margin-top:6px"><button data-a="agua" data-d="-1" aria-label="Menos um copo">${ic('minus')}</button><b>${(d && d.agua) || 0}/${S.agua}</b><button data-a="agua" data-d="1" aria-label="Mais um copo">${ic('plus')}</button></div>` : '';
+    h += `<div class="mission ${p.cls} ${done ? 'done' : ''}">
+      <div class="ico">${ic(p.icon)}</div>
+      <div class="txt"><div class="lbl">${p.n} · +${GANHO.missao}</div><div class="t">${esc(misText(m))}</div>${m.auto && !done ? `<div class="small muted">${esc(m.auto)}</div>` : ''}${extra}
+        <button class="swap" data-a="swap" data-p="${p.id}">${ic('swap')} trocar missão</button></div>
+      <button class="check ${done ? 'on' : ''}" data-a="toggle" data-m="${m.id}" aria-pressed="${done}" aria-label="${done ? 'Feita' : 'Marcar como feita'}: ${esc(misText(m))}">${ic('check')}</button>
+    </div>`;
+  });
+  const gym = isDone(t, 'academia');
+  h += `<div class="mission p-bonus ${gym ? 'done' : ''}"><div class="ico">${ic('dumbbell')}</div>
+    <div class="txt"><div class="lbl">Bônus · +${GANHO.academia}</div><div class="t">Ir à academia</div><div class="small muted">Vale mais que tudo. Anotou o treino, marca sozinho.</div></div>
+    <button class="check ${gym ? 'on' : ''}" data-a="toggle" data-m="academia" aria-pressed="${gym}" aria-label="Fui à academia">${ic('check')}</button></div>`;
+  if (boxReady()) h += `<section class="card box-cta"><canvas data-gift="closed" aria-hidden="true"></canvas><div class="grow"><h3>Sua caixinha do dia chegou</h3><p class="small muted">Moedas e uma surpresa.</p></div><button class="btn sun" data-a="openBox">Abrir</button></section>`;
+  else if (!isActive(t)) h += `<section class="card box-cta"><canvas data-gift="closed" aria-hidden="true" style="opacity:.5"></canvas><p class="grow small muted">Faça uma missão qualquer e ganhe a caixinha do dia.</p></section>`;
+  h += foodMiniHTML();
+  h += mimoHTML();
+  if (rec) h += `<section class="card"><div class="card-h"><h3>Sono de hoje</h3><button class="link" data-a="editSleep" data-k="${t}">editar</button></div><p><b>${fmtH(rec.h)}</b> <span class="muted">(${rec.b} até ${rec.w})</span></p></section>`;
+  h += sleepWeekHTML();
+  return h;
+}
+function foodMiniHTML(){
+  const d = S.days[today()], n = dayNut(d), t = targets(), pct = Math.min(100, n.k / t.kcal * 100);
+  return `<section class="card"><div class="card-h"><h3>${ic('leaf')} Comida de hoje</h3><button class="link" data-a="tab" data-t="comida">anotar</button></div>
+    <div class="prog food thin ${n.k > t.kcal * 1.1 ? 'over' : ''}"><i style="width:${pct}%"></i></div>
+    <p class="small muted" style="margin-top:6px">≈ ${nf0.format(n.k)} de ${nf0.format(t.kcal)} kcal${MAIN_SLOTS.some(s => balanced(d, s)) ? ' · <span class="tag ok">prato equilibrado</span>' : ''}</p></section>`;
+}
+function mimoHTML(){
+  const ym = monthKey(today()), mi = monthInfo(ym), rec = S.mimos[ym], pct = Math.min(100, Math.round(mi.got / mi.need * 100));
+  if (rec) return `<section class="card mimo won"><div class="card-h"><h3>${ic('gift')} Mimo de ${monthName(ym)} conquistado!</h3></div>
+      <p>${rec.entregue ? 'Já entregue. Que delícia!' : rec.escolha ? `Você escolheu: <b>${esc(rec.escolha)}</b>. O ${esc(QUEM_DA_O_MIMO)} te entrega no encontro do mês.` : `Escolha seu mimo. Quem entrega é o ${esc(QUEM_DA_O_MIMO)}.`}</p>
+      <button class="btn sun full" style="margin-top:12px" data-a="mimo" data-ym="${ym}">${rec.entregue ? 'Ver' : rec.escolha ? 'Mostrar ao ' + esc(QUEM_DA_O_MIMO) : 'Escolher mimo'}</button></section>`;
+  return `<section class="card mimo"><div class="card-h"><h3>${ic('gift')} Mimo de ${monthName(ym)}</h3><span class="tag">${mi.got}/${mi.need} dias</span></div>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${mi.need}" aria-valuenow="${mi.got}" aria-label="Dias ativos no mês"><i style="width:${pct}%"></i></div>
+    <p class="small muted" style="margin-top:8px">Faltam <b>${mi.left}</b> ${mi.left === 1 ? 'dia' : 'dias'} com pelo menos uma missão. O ${esc(QUEM_DA_O_MIMO)} entrega um mimo no encontro do mês.</p></section>`;
+}
+function sleepWeekHTML(){
+  const t = today(), days = []; for (let i = 6; i >= 0; i--) days.push(addDays(t, -i));
+  const av = sleepAvg(7);
+  let h = `<section class="card"><div class="card-h"><h3>Sono da semana</h3>${av ? `<span class="tag">média ${fmtH(av.avg)}</span>` : ''}</div><div class="bars">`;
+  days.forEach(k => { const r = S.sleep[k], pct = r ? Math.min(100, r.h / 10 * 100) : 0;
+    h += `<button class="bar" data-a="editSleep" data-k="${k}" aria-label="${dayLabel(k)}: ${r ? fmtH(r.h) : 'sem registro'}">${r ? `<em>${fmtH(r.h)}</em>` : ''}<i class="${r ? '' : 'empty'}" style="height:${r ? pct : 4}%"></i><small>${fmtD(k, {weekday:'short'}).slice(0, 3)}</small></button>`; });
+  h += '</div><p class="small muted" style="margin-top:8px">Toque num dia para anotar ou corrigir.</p>';
+  const a5 = sleepAvg(5);
+  if (a5 && a5.n >= 5 && a5.avg < 5.5) h += `<div class="coll" style="margin-top:12px"><b>Você tem dormido pouco.</b> Dormir menos de 6h por muitos dias pesa no humor, na fome e no treino. Um passinho: deitar 15 min mais cedo. Se o cansaço não passar, vale conversar com um médico.</div>`;
+  return h + '</section>';
+}
+
+/* ---------- COMIDA ---------- */
+function comidaHTML(){
+  const k = foodDay || today(), d = S.days[k], n = dayNut(d), t = targets(), pct = Math.min(100, n.k / t.kcal * 100);
+  let h = `<div class="daynav"><button class="icon-btn" data-a="fday" data-d="-1" aria-label="Dia anterior">${ic('left')}</button><b>${dayLabel(k)}</b><button class="icon-btn" data-a="fday" data-d="1" aria-label="Próximo dia" ${k >= today() ? 'disabled' : ''}>${ic('right')}</button></div>`;
+  const status = !n.k ? 'Anote o que comer. Valores são aproximados.' : n.k < t.kcal * 0.8 ? 'Ainda tem espaço no dia.' : n.k <= t.kcal * 1.1 ? 'Dentro da meta. Lindo!' : 'Passou um pouco. Amanhã é outro dia, sem culpa.';
+  h += `<section class="card"><div class="card-h"><h2>≈ ${nf0.format(n.k)} kcal</h2><span class="tag ${n.k && n.k <= t.kcal * 1.1 && n.k >= t.kcal * .8 ? 'ok' : 'off'}">meta ${nf0.format(t.kcal)}</span></div>
+    <div class="prog food ${n.k > t.kcal * 1.1 ? 'over' : ''}"><i style="width:${pct}%"></i></div><p class="small muted" style="margin-top:6px">${status}</p>
+    <div class="kpi"><div><span class="small muted">Proteína</span><b>${nf0.format(n.pr)} / ${t.prot} g</b><div class="prog thin food"><i style="width:${Math.min(100, n.pr / t.prot * 100)}%"></i></div></div>
+    <div><span class="small muted">Fibra</span><b>${nf0.format(n.fb)} / ${t.fibra} g</b><div class="prog thin food"><i style="width:${Math.min(100, n.fb / t.fibra * 100)}%"></i></div></div></div>
+    <div class="roles" style="margin-top:10px"><span class="tag ${verdeDay(k) ? 'ok' : 'off'}">fruta + verdura ${verdeDay(k) ? '✓' : ''}</span>${k < today() && dayOnTarget(k) ? '<span class="tag ok">dia na meta ✓</span>' : ''}</div></section>`;
+  h += `<section class="card p-comida" style="display:flex;align-items:center;gap:12px"><div class="mission" style="box-shadow:none;margin:0;padding:0;border:0;background:none"><div class="ico">${ic('drop')}</div></div><div class="grow"><b>Água</b><div class="small muted">meta ${S.agua} copos</div></div>
+    <div class="counter"><button data-a="agua" data-d="-1" data-k="${k}" aria-label="Menos um copo">${ic('minus')}</button><b>${(d && d.agua) || 0}</b><button data-a="agua" data-d="1" data-k="${k}" aria-label="Mais um copo">${ic('plus')}</button></div></section>`;
+  SLOTS.forEach(([sid, sn]) => {
+    const items = ((d && d.food) || []).filter(x => x.s === sid);
+    const sk = items.reduce((a, x) => a + (x.k || 0), 0);
+    let roleTags = '';
+    if (MAIN_SLOTS.indexOf(sid) >= 0 && items.length){
+      const r = slotRoles(d, sid);
+      roleTags = `<div class="roles">${[['prot','Proteína'],['fibra','Fibra'],['carbo','Carboidrato']].map(([id, n]) => `<span class="tag ${r[id] ? 'ok' : 'off'}">${r[id] ? '✓ ' : ''}${n}</span>`).join('')}${balanced(d, sid) ? `<span class="tag coin">+${GANHO.prato} moedas</span>` : ''}</div>`;
+    }
+    h += `<section class="card"><div class="slot-h"><h3>${sn}</h3>${sk ? `<span class="small muted">≈ ${nf0.format(sk)} kcal</span>` : ''}</div>${roleTags}`;
+    items.forEach(it => {
+      const f = foodById(it.f);
+      h += `<div class="food-item"><span class="q">${nf2.format(it.q)} ${esc(it.u === 'porção' ? (it.q > 1 ? 'porções' : 'porção') : it.u)}</span><span class="grow">${esc(f ? f.n : 'Alimento')}${it.k != null ? ` <span class="small muted">· ≈ ${nf0.format(it.k)} kcal</span>` : ''}</span><button class="icon-btn" data-a="delFood" data-id="${it.id}" data-k="${k}" aria-label="Remover">${ic('trash')}</button></div>`;
+    });
+    h += `<button class="add-row" data-a="addFood" data-s="${sid}" data-k="${k}">${ic('plus')} Adicionar</button></section>`;
+  });
+  h += `<div class="row" style="margin:8px 0 16px"><button class="btn line grow" data-a="newFood">${ic('label')} Cadastrar pelo rótulo</button><button class="btn line grow" data-a="foodLib">${ic('list')} Meus alimentos</button></div>`;
+  return h;
+}
+
+/* ---------- TREINO ---------- */
+function lastCarga(name){ for (let i = S.sessions.length - 1; i >= 0; i--){ const e = S.sessions[i].ex.find(x => x.n.toLowerCase() === name.toLowerCase() && x.done); if (e) return e.c; } return null; }
+function treinoHTML(){
+  const t = today(), d = S.days[t], ex = (d && d.ex) || [];
+  let h = `<section class="card"><div class="card-h"><h2>Movimento rápido</h2></div><p class="small muted">Caminhada, alongamento, dança... Anotou, a missão de movimento marca sozinha.</p>`;
+  if (ex.length) h += '<ul class="list" style="margin-top:8px">' + ex.map((e, i) => `<li><span class="grow"><b>${esc((MOVIMENTOS.find(m => m[0] === e.t) || [0, 'Movimento'])[1])}</b> · ${e.min} min</span><button class="icon-btn" data-a="delEx" data-i="${i}" aria-label="Remover">${ic('trash')}</button></li>`).join('') + '</ul>';
+  h += `<button class="btn ghost full" style="margin-top:10px" data-a="addEx">${ic('plus')} Anotar movimento</button></section>`;
+  h += `<div class="sec-t"><h2>Academia</h2><p>${gymCount()} ${gymCount() === 1 ? 'ida' : 'idas'} · +${GANHO.academia} moedas cada</p></div>`;
+  if (!S.fichas.length) h += `<section class="card"><p class="muted">Se quiser, monte sua ficha (Treino A, B...) com exercícios, séries e carga. Aí é só abrir e ir marcando.</p></section>`;
+  S.fichas.forEach(f => {
+    h += `<section class="card"><div class="card-h"><h3>${esc(f.n)}</h3><button class="link" data-a="editFicha" data-id="${f.id}">editar</button></div>
+      <p class="small muted">${f.ex.map(e => esc(e.n)).join(' · ') || 'Sem exercícios ainda'}</p>
+      <button class="btn full" style="margin-top:10px" data-a="startSession" data-id="${f.id}" ${f.ex.length ? '' : 'disabled'}>${ic('play')} Começar este treino</button></section>`;
+  });
+  h += `<div class="row" style="margin:8px 0"><button class="btn line grow" data-a="editFicha">${ic('plus')} Nova ficha</button><button class="btn ghost grow" data-a="toggle" data-m="academia">${isDone(t, 'academia') ? 'Fui hoje ✓' : 'Fui sem ficha'}</button></div>`;
+  if (S.sessions.length){
+    h += `<div class="sec-t"><h2>Últimos treinos</h2></div><section class="card"><ul class="list">`;
+    S.sessions.slice(-6).reverse().forEach(s => { h += `<li><span class="grow"><b>${esc(s.fn)}</b><br><span class="small muted">${dayLabel(s.d)} · ${s.ex.filter(e => e.done).length} de ${s.ex.length} exercícios</span></span></li>`; });
+    h += '</ul></section>';
+    const names = {}; S.sessions.forEach(s => s.ex.forEach(e => { if (e.done && e.c != null) (names[e.n] = names[e.n] || []).push(e.c); }));
+    const evo = Object.keys(names).filter(n => names[n].length > 1);
+    if (evo.length) h += `<section class="card"><h3>Evolução de carga</h3><ul class="list">` + evo.map(n => { const a = names[n], f = a[0], l = a[a.length - 1]; return `<li><span class="grow">${esc(n)}</span><span>${nf1.format(f)} → <b>${nf1.format(l)} kg</b> ${l > f ? '<span class="trend-up">↑</span>' : ''}</span></li>`; }).join('') + '</ul></section>';
+  }
+  return h;
+}
+
+/* ---------- CORPO ---------- */
+let corpoMetric = 'peso';
+function corpoHTML(){
+  const t = targets(), p = S.profile;
+  let h = `<section class="card"><div class="card-h"><h2>Meu perfil</h2><button class="link" data-a="editProfile">editar</button></div>
+    <p class="small muted">${p.idade ? p.idade + ' anos · ' : ''}${p.altura ? p.altura + ' cm · ' : ''}${t.peso ? nf1.format(t.peso) + ' kg · ' : ''}${(RITMO.find(r => r[0] === p.ritmo) || ['', 'Meta'])[1]}</p>
+    <div class="kpi"><div><span class="small muted">Meta do dia</span><b>≈ ${nf0.format(t.kcal)} kcal</b></div><div><span class="small muted">Proteína</span><b>≈ ${t.prot} g</b></div></div>
+    <p class="help">${p.kcalManual ? 'Meta definida por você.' : 'Estimativa pela fórmula de Mifflin-St Jeor. Atualiza quando você anota peso novo ou treina mais.'}</p></section>`;
+  h += `<section class="card"><div class="card-h"><h2>Medidas</h2><button class="btn" style="min-height:44px" data-a="addMeasure">${ic('plus')} Medir</button></div>`;
+  const ms = S.measures.slice().sort((a, b) => a.d < b.d ? -1 : 1);
+  if (!ms.length) return h + `<p class="muted">Anote peso e medidas quando quiser. De 15 em 15 dias é um bom ritmo.</p></section>`;
+  const avail = MEDIDAS.filter(m => ms.some(x => x[m[0]] != null));
+  if (avail.length && !avail.some(m => m[0] === corpoMetric)) corpoMetric = avail[0][0];
+  h += `<div class="chips" role="group" aria-label="Medida no gráfico">${avail.map(m => `<button class="chip ${corpoMetric === m[0] ? 'on' : ''}" data-a="metric" data-m="${m[0]}" aria-pressed="${corpoMetric === m[0]}">${m[1]}</button>`).join('')}</div>`;
+  h += lineChart(ms.filter(x => x[corpoMetric] != null).map(x => ({d:x.d, v:x[corpoMetric]})), (MEDIDAS.find(m => m[0] === corpoMetric) || ['', '', ''])[2]);
+  h += '</section><section class="card"><h3>Histórico</h3><ul class="list">';
+  ms.slice().reverse().forEach(x => { h += `<li><span class="grow"><b>${fmtD(x.d, {day:'2-digit', month:'short', year:'numeric'})}</b><br><span class="small muted">${MEDIDAS.filter(m => x[m[0]] != null).map(m => m[1] + ' ' + nf1.format(x[m[0]]) + ' ' + m[2]).join(' · ')}</span></span><button class="icon-btn" data-a="addMeasure" data-id="${x.id}" aria-label="Editar">${ic('edit')}</button></li>`; });
+  return h + '</ul></section>';
+}
+function lineChart(pts, unit){
+  if (pts.length < 2) return `<p class="small muted" style="margin-top:12px">${pts.length ? 'Última: <b>' + nf1.format(pts[0].v) + ' ' + unit + '</b>. Com duas medições aparece o gráfico.' : ''}</p>`;
+  const W = 320, H = 150, pl = 34, pr = 10, pt = 16, pb = 22;
+  const vs = pts.map(p => p.v); let mn = Math.min.apply(null, vs), mx = Math.max.apply(null, vs); if (mx - mn < 1){ mn -= .5; mx += .5; }
+  const X = i => pl + i * (W - pl - pr) / (pts.length - 1), Y = v => pt + (mx - v) * (H - pt - pb) / (mx - mn);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p.v).toFixed(1)).join(' ');
+  const diff = vs[vs.length - 1] - vs[0];
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de ${nf1.format(vs[0])} para ${nf1.format(vs[vs.length - 1])} ${unit}">
+    <line x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}" stroke="#EADFD3"/>
+    <text x="2" y="${Y(mx) + 4}">${nf1.format(mx)}</text><text x="2" y="${Y(mn) + 4}">${nf1.format(mn)}</text>
+    <path d="${line}" fill="none" stroke="#8B3A62" stroke-width="2.5" stroke-linejoin="round"/>
+    ${pts.map((p, i) => `<circle cx="${X(i)}" cy="${Y(p.v)}" r="3.5" fill="#fff" stroke="#8B3A62" stroke-width="2"/>`).join('')}
+    <text x="${pl}" y="${H - 6}">${fmtD(pts[0].d)}</text><text x="${W - pr}" y="${H - 6}" text-anchor="end">${fmtD(pts[pts.length - 1].d)}</text>
+  </svg><p class="small" style="margin-top:4px">Desde a primeira: <b>${diff > 0 ? '+' : ''}${nf1.format(diff)} ${unit}</b></p>`;
+}
+
+/* ---------- QUARTO ---------- */
+let collTab = 'curio';
+function cozyLines(){
+  const out = [], st = balancedLast7(), t = today();
+  if (st >= 6) out.push('Sua plantinha da janela floresceu: ' + st + ' pratos equilibrados na semana.');
+  else if (st >= 3) out.push('Sua plantinha está crescendo com seus pratos equilibrados (' + st + ' na semana).');
+  else out.push('Pratos equilibrados fazem a plantinha da janela crescer.');
+  if (verdeDay(t) || dayOnTarget(addDays(t, -1)) || balanced(S.days[t], 'almoco')) out.push('Um passarinho veio visitar porque você comeu bem.');
+  return out;
+}
+function quartoHTML(){
+  const owned = Object.keys(ITENS).filter(id => S.room.items[id]).length, total = Object.keys(ITENS).length;
+  let h = `<section class="card" style="padding:10px"><div class="room"><canvas id="roomCv" role="img" aria-label="Seu quarto com ${owned} itens"></canvas></div>
+    ${cozyLines().map(l => `<p class="cozy">${ic('sprout')}<span>${esc(l)}</span></p>`).join('')}
+    <div class="row" style="margin-top:10px"><button class="btn grow" data-a="wardrobe">${ic('shirt')} Guarda-roupa e loja</button><button class="btn ghost" data-a="itemsList" aria-label="Ver itens do quarto">${owned}/${total}</button></div></section>`;
+  h += `<section class="card"><div class="card-h"><h3>${ic('coin')} ${S.coins} moedas</h3><button class="link" data-a="code">${ic('key')} Tenho um código</button></div><p class="small muted">Missões, pratos equilibrados, dia na meta e caixinhas dão moedas. Elas compram roupas e coisas para o quarto.</p></section>`;
+  if (boxReady()) h += `<section class="card box-cta"><canvas data-gift="closed" aria-hidden="true"></canvas><div class="grow"><h3>Caixinha do dia</h3><p class="small muted">Pronta para abrir!</p></div><button class="btn sun" data-a="openBox">Abrir</button></section>`;
+  else { const d = S.days[today()]; h += `<section class="card box-cta"><canvas data-gift="${d && d.box ? 'open' : 'closed'}" aria-hidden="true" style="opacity:.6"></canvas><p class="grow small muted">${d && d.box ? 'Caixinha de hoje já aberta. Amanhã tem outra.' : 'Faça uma missão para liberar a caixinha de hoje.'}</p>${d && d.box ? '<button class="link" data-a="reReveal">rever</button>' : ''}</section>`; }
+  h += mimoHTML();
+  h += `<div class="sec-t"><h2>Coleção</h2></div><div class="chips" role="group" aria-label="Coleção">
+    <button class="chip ${collTab === 'curio' ? 'on' : ''}" data-a="coll" data-c="curio" aria-pressed="${collTab === 'curio'}">Curiosidades</button>
+    <button class="chip ${collTab === 'cat' ? 'on' : ''}" data-a="coll" data-c="cat" aria-pressed="${collTab === 'cat'}">Para o coração</button></div>`;
+  const cards = S.cards.filter(c => c.type === collTab).slice().reverse();
+  if (!cards.length) h += `<p class="empty">Ainda nada aqui. Abra caixinhas para colecionar.</p>`;
+  cards.forEach(c => {
+    if (c.type === 'curio') h += `<div class="coll"><p>${esc(CURIOSIDADES[c.i] || '')}</p><p class="small sign">— ${esc(QUEM_DA_O_MIMO)} · ${fmtD(c.d)}</p></div>`;
+    else { const x = CATOLICO[c.i] || {}; h += `<div class="coll cat"><p>${esc(x.t)}</p><p class="small muted">${esc(x.r)} · ${fmtD(c.d)}</p></div>`; }
+  });
+  const ms = Object.keys(S.mimos).sort().reverse();
+  if (ms.length) h += `<div class="sec-t"><h2>Mimos</h2></div><section class="card"><ul class="list">` + ms.map(ym => { const r = S.mimos[ym]; return `<li><span class="grow"><b style="text-transform:capitalize">${monthName(ym)}</b><br><span class="small muted">${r.escolha ? esc(r.escolha) : 'a escolher'} · ${r.entregue ? 'entregue' : 'a receber'}</span></span><button class="link" data-a="mimo" data-ym="${ym}">abrir</button></li>`; }).join('') + '</ul></section>';
+  return h;
+}
+
+/* ===================================================================== folhas */
+function openSheet(title, html){
+  $('#sheet').innerHTML = `<div class="grab"></div><div class="sheet-h"><h2 id="sheetTitle">${title}</h2><button class="icon-btn" data-a="closeSheet" aria-label="Fechar">${ic('x')}</button></div>` + html;
+  $('#sheet').classList.add('open'); $('#sheetBg').classList.add('open');
+  $$('#sheet canvas[data-gift]').forEach(c => drawGift(c, c.dataset.gift === 'open', 8));
+}
+function closeSheet(){ $('#sheet').classList.remove('open'); $('#sheetBg').classList.remove('open'); tryOn = null; }
+
+function showReveal(r){
+  let html = `<div class="reveal"><canvas data-gift="open" aria-hidden="true" style="width:120px;height:120px"></canvas>`;
+  if (r.coins) html += `<p style="margin-top:6px"><span class="tag coin" style="font-size:.95rem">+${r.coins} moedas</span></p>`;
+  if (r.item) html += `<p class="pix" style="margin-top:8px">ITEM NOVO</p><p class="quote">${esc(ITENS[r.item].n)}</p><p class="muted">Já está no seu quarto.</p>`;
+  if (r.curio != null) html += `<p class="pix" style="margin-top:8px">CURIOSIDADE DO DIA</p><p class="quote">${esc(CURIOSIDADES[r.curio])}</p><p class="sign">— ${esc(QUEM_DA_O_MIMO)}</p>`;
+  if (r.cat != null){ const x = CATOLICO[r.cat]; html += `<p class="pix" style="margin-top:8px">PARA O CORAÇÃO</p><p class="quote">${esc(x.t)}</p><p class="muted">${esc(x.r)}</p>`; }
+  html += `<button class="btn full" style="margin-top:16px" data-a="goRoom">Ver meu quarto</button></div>`;
+  openSheet('Caixinha do dia', html);
+}
+function openMimo(ym){
+  const r = S.mimos[ym]; if (!r) return;
+  let html = `<div class="reveal"><canvas data-gift="open" aria-hidden="true" style="width:120px;height:120px"></canvas><p class="pix" style="margin-top:8px">MIMO DE ${monthName(ym).toUpperCase()}</p>`;
+  if (r.entregue) html += `<p class="quote">${esc(r.escolha || 'Mimo')} entregue. Parabéns pelo mês!</p>`;
+  else if (r.escolha) html += `<p class="quote">Você conquistou: ${esc(r.escolha)}</p><p class="muted">Mostre esta tela ao ${esc(QUEM_DA_O_MIMO)} no encontro do mês.</p>
+    <button class="btn line full" style="margin-top:12px" data-a="mimoTroca" data-ym="${ym}">Trocar escolha</button>
+    <button class="btn full" style="margin-top:8px" data-a="mimoOk" data-ym="${ym}">Já recebi</button>`;
+  else html += `<p class="quote">Você conseguiu! Escolha seu mimo:</p><div style="display:grid;gap:8px;margin-top:8px">${MIMOS.map((m, i) => `<button class="btn ghost full" data-a="mimoPick" data-ym="${ym}" data-i="${i}">${esc(m)}</button>`).join('')}</div><p class="small muted" style="margin-top:10px">Quem entrega é o ${esc(QUEM_DA_O_MIMO)}, no encontro do mês.</p>`;
+  openSheet('Mimo do mês', html + '</div>');
+}
+function openSwap(p){
+  openSheet('Trocar missão', `<p class="muted" style="margin-bottom:8px">Escolha o que cabe no seu dia. A escolha fica salva.</p><div style="display:grid;gap:8px">` +
+    MISSOES.filter(m => m.p === p).map(m => `<button class="btn ${S.pick[p] === m.id ? '' : 'ghost'} full" style="justify-content:flex-start;text-align:left" data-a="pick" data-p="${p}" data-m="${m.id}">${esc(misText(m))}</button>`).join('') + '</div>');
+}
+function openSleep(k){
+  openSheet('Sono · ' + dayLabel(k), `<div class="card sleep-card" style="margin:0">${sleepFormHTML(k, S.sleep[k])}${S.sleep[k] ? `<button class="btn danger full" style="margin-top:8px" data-a="delSleep" data-k="${k}">Apagar registro</button>` : ''}</div><p class="small muted" style="margin-top:8px">O registro fica no dia em que você acordou.</p>`);
+}
+
+/* comida */
+let addCtx = null;
+function openAddFood(k, s){ addCtx = {k, s, f:null, q:1, u:'porção', search:''}; renderAddFood(); }
+function foodListHTML(){
+  const c = addCtx, q = norm(c.search || '');
+  let ids;
+  if (!q){ ids = S.recentFoods.filter(id => F[id]).slice(0, 12); if (ids.length < 12) ids = ids.concat(Object.keys(F).filter(id => ids.indexOf(id) < 0 && ['carbo','leg','prot','veg','fruta'].indexOf(F[id].g) >= 0).slice(0, 20)); }
+  else ids = Object.keys(F).filter(id => norm(F[id].n).includes(q)).sort((a, b) => norm(F[a].n).indexOf(q) - norm(F[b].n).indexOf(q)).slice(0, 40);
+  const rows = ids.map(id => { const f = F[id]; return `<button class="food-pick ${c.f === id ? 'on' : ''}" data-a="pickFood" data-id="${id}"><span class="gdot" style="background:${GROUP_COLOR[f.g] || '#999'}"></span><span class="grow"><b>${esc(f.n)}</b><small>${esc(f.p)} · ${nf0.format(f.k)} kcal</small></span></button>`; }).join('');
+  return rows + (q ? `<button class="food-pick" data-a="newFood" data-name="${esc(c.search)}"><span class="gdot" style="background:#ccc"></span><span class="grow"><b>Cadastrar "${esc(c.search)}"</b><small>pelo rótulo ou do seu jeito</small></span></button>` : '') + (!rows && !q ? '<p class="empty">Busque um alimento.</p>' : '');
+}
+function unitOpts(f){ const base = ['porção']; const pu = portionUnit(f); if (pu) base.push(pu); return base.concat(Object.keys(MEDIDA_G).filter(u => u !== 'porção' && u !== pu)).concat(Object.keys(f.uw || {}).filter(u => !(u in MEDIDA_G))); }
+function renderAddFood(keepFocus){
+  const c = addCtx, f = c.f ? F[c.f] : null;
+  let html = `<label class="f sr" for="foodSearch">Buscar alimento</label><input class="in" id="foodSearch" placeholder="Buscar: arroz, frango, banana..." autocomplete="off" value="${esc(c.search)}">
+    <div id="foodList" style="max-height:${f ? '160px' : '52dvh'};overflow:auto;margin-top:8px">${foodListHTML()}</div>`;
+  if (f){
+    const nut = nutOf(f, c.q, c.u), g = gramsPer(f, c.u);
+    html += `<div class="card" style="margin-top:10px"><b>${esc(f.n)}</b><p class="small muted">1 porção = ${esc(f.p)} · ${nf0.format(f.k)} kcal</p>
+      <div class="grid2" style="margin-top:4px"><div><label class="f" for="fq">Quantidade</label><div class="stepper"><button class="icon-btn" data-a="fq" data-d="-0.5" aria-label="Menos">${ic('minus')}</button><input class="in" id="fq" inputmode="decimal" value="${nf2.format(c.q)}"><button class="icon-btn" data-a="fq" data-d="0.5" aria-label="Mais">${ic('plus')}</button></div></div>
+      <div><label class="f" for="fu">Medida</label><select class="in" id="fu">${unitOpts(f).map(u => `<option ${u === c.u ? 'selected' : ''}>${esc(u)}</option>`).join('')}</select></div></div>
+      <p class="help" id="fqInfo">${nut.k != null ? `≈ <b>${nf0.format(nut.k)} kcal</b>${c.u !== 'porção' && c.u !== 'g' && c.u !== 'kg' && g ? ` (1 ${esc(c.u)} ≈ ${nf0.format(g)} g)` : ''}` : 'Sem como calcular nessa medida. Use porção, g ou ajuste a medida.'}
+      ${c.u !== 'porção' && c.u !== 'g' && c.u !== 'kg' && c.u !== 'ml' ? ` · <button class="link" style="padding:0;min-height:0" data-a="adjUnit">ajustar quanto pesa</button>` : ''}</p>
+      <button class="btn full" style="margin-top:12px" data-a="saveFood">Adicionar em ${esc((SLOTS.find(x => x[0] === c.s) || ['', ''])[1])}</button></div>`;
+  }
+  openSheet('Anotar comida', html);
+  const inp = $('#foodSearch');
+  inp.addEventListener('input', () => { c.search = inp.value; $('#foodList').innerHTML = foodListHTML(); });
+  if (keepFocus) inp.focus();
+  const fq = $('#fq'), fu = $('#fu');
+  const upd = () => { c.q = num(fq.value) || 0; c.u = fu.value; const n = nutOf(f, c.q, c.u), g = gramsPer(f, c.u); $('#fqInfo').innerHTML = n.k != null ? `≈ <b>${nf0.format(n.k)} kcal</b>${c.u !== 'porção' && c.u !== 'g' && c.u !== 'kg' && g ? ` (1 ${esc(c.u)} ≈ ${nf0.format(g)} g)` : ''}` : 'Sem como calcular nessa medida. Use porção, g ou ajuste a medida.'; };
+  if (fq){ fq.addEventListener('input', upd); fu.addEventListener('change', () => { upd(); renderAddFood(); }); }
+}
+function saveFood(){
+  const c = addCtx, f = F[c.f]; c.q = num($('#fq').value); c.u = $('#fu').value;
+  if (!f){ toast('Escolha um alimento'); return; }
+  if (!c.q || c.q <= 0){ toast('Coloque a quantidade'); return; }
+  const n = nutOf(f, c.q, c.u), d = getDay(c.k, true);
+  d.food.push({id:uid(), s:c.s, f:f.id, q:c.q, u:c.u, k:n.k == null ? null : Math.round(n.k), pr:Math.round(n.pr * 10) / 10, fb:Math.round(n.fb * 10) / 10});
+  S.recentFoods = [f.id].concat(S.recentFoods.filter(x => x !== f.id)).slice(0, 20);
+  closeSheet();
+  if (!afterChange()) toast('Anotado' + (n.k != null ? ' · ≈ ' + nf0.format(n.k) + ' kcal' : ''));
+}
+function openAdjUnit(){
+  const c = addCtx, f = F[c.f], g = gramsPer(f, c.u);
+  openSheet('Quanto pesa?', `<p class="muted">Na sua casa, 1 <b>${esc(c.u)}</b> de ${esc(f.n)} pesa mais ou menos quantos gramas?</p>
+    <label class="f" for="adjG">Gramas</label><input class="in" id="adjG" inputmode="decimal" value="${g ? nf0.format(g) : ''}">
+    <p class="help">Dica: pese uma vez na balança de cozinha e nunca mais precisa.</p>
+    <button class="btn full" style="margin-top:14px" data-a="saveAdj">Salvar</button>`);
+}
+function openNewFood(name, editId){
+  const f = editId ? F[editId] : {n:name || '', g:'outro', gr:'', k:'', pr:'', fb:''};
+  openSheet(editId ? 'Editar alimento' : 'Cadastrar alimento', `<p class="muted small">Pegue o rótulo (tabela nutricional) e copie a porção e as calorias. Se não tiver rótulo, coloque o que souber.</p>
+    <label class="f" for="nfN">Nome</label><input class="in" id="nfN" value="${esc(f.n)}">
+    <label class="f" for="nfG">Tipo</label><select class="in" id="nfG">${Object.keys(GROUPS).filter(g => g !== 'prato').map(g => `<option value="${g}" ${f.g === g ? 'selected' : ''}>${esc(GROUPS[g])}</option>`).join('')}<option value="outro" ${f.g === 'outro' ? 'selected' : ''}>Outro</option></select>
+    <div class="grid2"><div><label class="f" for="nfP">Porção (g ou ml)</label><input class="in" id="nfP" inputmode="decimal" value="${f.gr ? nf2.format(f.gr) : ''}" placeholder="ex.: 30"></div>
+    <div><label class="f" for="nfK">Calorias da porção</label><input class="in" id="nfK" inputmode="decimal" value="${f.k !== '' && f.k != null ? nf2.format(f.k) : ''}" placeholder="kcal"></div>
+    <div><label class="f" for="nfPr">Proteína (g)</label><input class="in" id="nfPr" inputmode="decimal" value="${f.pr ? nf2.format(f.pr) : ''}" placeholder="opcional"></div>
+    <div><label class="f" for="nfFb">Fibra (g)</label><input class="in" id="nfFb" inputmode="decimal" value="${f.fb ? nf2.format(f.fb) : ''}" placeholder="opcional"></div></div>
+    <p class="help">No rótulo: "Porção de 30 g" e "Valor energético 120 kcal". Depois o app converte para colher, concha, kg...</p>
+    <button class="btn full" style="margin-top:14px" data-a="saveNewFood" data-id="${editId || ''}">Salvar</button>
+    ${editId ? `<button class="btn danger full" style="margin-top:8px" data-a="delCustom" data-id="${editId}">Excluir</button>` : ''}`);
+}
+function openFoodLib(){
+  const customs = S.customFoods.slice().sort((a, b) => a.n.localeCompare(b.n));
+  const adjusted = Object.keys(S.foodEdits).filter(id => F[id] && Object.keys(S.foodEdits[id].uw || {}).length);
+  openSheet('Meus alimentos', `<h3>Cadastrados por você</h3>${customs.length ? '<ul class="list">' + customs.map(f => `<li><span class="grow"><b>${esc(f.n)}</b><br><span class="small muted">${esc(f.p)} · ${nf0.format(f.k)} kcal</span></span><button class="icon-btn" data-a="editCustom" data-id="${f.id}" aria-label="Editar">${ic('edit')}</button></li>`).join('') + '</ul>' : '<p class="small muted">Nenhum ainda.</p>'}
+    <button class="btn full" style="margin-top:10px" data-a="newFood">${ic('label')} Cadastrar pelo rótulo</button>
+    <h3 style="margin-top:20px">Medidas ajustadas</h3>${adjusted.length ? '<ul class="list">' + adjusted.map(id => `<li><span class="grow"><b>${esc(F[id].n)}</b><br><span class="small muted">${Object.entries(S.foodEdits[id].uw).map(([u, g]) => '1 ' + esc(u) + ' = ' + nf0.format(g) + ' g').join(' · ')}</span></span><button class="icon-btn" data-a="clearAdj" data-id="${id}" aria-label="Desfazer ajuste">${ic('trash')}</button></li>`).join('') + '</ul>' : '<p class="small muted">Ao anotar comida, toque em "ajustar quanto pesa" para dizer quanto pesa a concha ou a colher da sua casa.</p>'}
+    <p class="help" style="margin-top:12px">A base tem ${FOODS.length} alimentos com calorias aproximadas.</p>`);
+}
+
+/* treino */
+let fichaDraft = null, sessDraft = null;
+function openFicha(id){
+  const f = id ? S.fichas.find(x => x.id === id) : null;
+  fichaDraft = f ? JSON.parse(JSON.stringify(f)) : {id:uid(), n:'Treino ' + 'ABCDEFG'[S.fichas.length % 7], ex:[]};
+  if (!fichaDraft.ex.length) fichaDraft.ex.push({id:uid(), n:'', s:3, r:'12', c:null});
+  fichaDraft._existing = !!f; renderFicha();
+}
+function readFicha(){
+  if (!$('#fdN')) return;
+  fichaDraft.n = $('#fdN').value.trim() || fichaDraft.n;
+  fichaDraft.ex.forEach(e => { e.n = ($('#en_' + e.id) || {}).value || ''; e.s = num(($('#es_' + e.id) || {}).value); e.r = ($('#er_' + e.id) || {}).value || ''; e.c = num(($('#ec_' + e.id) || {}).value); });
+}
+function renderFicha(){
+  const f = fichaDraft;
+  openSheet(f._existing ? 'Editar ficha' : 'Nova ficha', `
+    <label class="f" for="fdN">Nome da ficha</label><input class="in" id="fdN" value="${esc(f.n)}">
+    <h3 style="margin-top:16px">Exercícios</h3>
+    ${f.ex.map(e => `<div class="ex-row"><div class="grid3">
+      <div><label class="f" for="en_${e.id}">Exercício</label><input class="in" id="en_${e.id}" value="${esc(e.n)}" placeholder="Ex.: Leg press"></div>
+      <div><label class="f" for="es_${e.id}">Séries</label><input class="in" id="es_${e.id}" inputmode="numeric" value="${e.s || ''}"></div>
+      <div><label class="f" for="er_${e.id}">Reps</label><input class="in" id="er_${e.id}" value="${esc(e.r || '')}"></div>
+      <div><label class="f" for="ec_${e.id}">kg</label><input class="in" id="ec_${e.id}" inputmode="decimal" value="${e.c != null ? nf2.format(e.c) : ''}"></div>
+    </div><button class="link" data-a="fichaDelEx" data-id="${e.id}" style="color:#9B2C1F">remover</button></div>`).join('')}
+    <button class="btn ghost full" data-a="fichaAddEx">${ic('plus')} Exercício</button>
+    <button class="btn full" style="margin-top:16px" data-a="saveFicha">Salvar ficha</button>
+    ${f._existing ? `<button class="btn danger full" style="margin-top:8px" data-a="delFicha">Excluir ficha</button>` : ''}`);
+}
+function openSession(id){
+  const f = S.fichas.find(x => x.id === id); if (!f) return;
+  sessDraft = {fid:f.id, fn:f.n, d:today(), ex:f.ex.filter(e => e.n).map(e => ({n:e.n, s:e.s, r:e.r, c:lastCarga(e.n) != null ? lastCarga(e.n) : e.c, done:false}))};
+  openSheet(esc(sessDraft.fn), `<p class="muted">Marque cada exercício ao terminar. Ajuste a carga se subiu.</p>
+    ${sessDraft.ex.map((e, i) => `<div class="ex-row row"><button class="check" style="--c:var(--primary)" data-a="sessDone" data-i="${i}" aria-pressed="false" aria-label="Feito: ${esc(e.n)}">${ic('check')}</button>
+      <div class="grow"><b>${esc(e.n)}</b><div class="small muted">${e.s || '-'} × ${esc(e.r || '-')}</div></div>
+      <div style="width:90px"><label class="sr" for="sc_${i}">Carga kg</label><input class="in" id="sc_${i}" inputmode="decimal" placeholder="kg" value="${e.c != null ? nf2.format(e.c) : ''}"></div></div>`).join('')}
+    <button class="btn full" style="margin-top:16px" data-a="finishSession">Terminar treino</button>`);
+}
+function readSession(){ sessDraft.ex.forEach((e, i) => { const el = $('#sc_' + i); if (el) e.c = num(el.value); }); }
+function openAddEx(){
+  openSheet('Anotar movimento', `<p class="f">O que você fez?</p><div class="chips" id="exT">${MOVIMENTOS.map((m, i) => `<button class="chip ${i === 0 ? 'on' : ''}" data-a="exT" data-t="${m[0]}">${m[1]}</button>`).join('')}</div>
+    <p class="f">Por quanto tempo?</p><div class="chips" id="exM">${[2,5,10,15,20,30,45,60].map(m => `<button class="chip ${m === 10 ? 'on' : ''}" data-a="exM" data-m="${m}">${m} min</button>`).join('')}</div>
+    <button class="btn full" style="margin-top:16px" data-a="saveEx">Salvar</button>`);
+}
+function openMeasure(id){
+  const x = id ? S.measures.find(m => m.id === id) : null;
+  openSheet(x ? 'Editar medidas' : 'Novas medidas', `<label class="f" for="mD">Data</label><input class="in" type="date" id="mD" value="${x ? x.d : today()}" max="${today()}">
+    <div class="grid2">${MEDIDAS.map(m => `<div><label class="f" for="m_${m[0]}">${m[1]} (${m[2]})</label><input class="in" id="m_${m[0]}" inputmode="decimal" value="${x && x[m[0]] != null ? nf2.format(x[m[0]]) : ''}"></div>`).join('')}</div>
+    <p class="help">Preencha só o que mediu. Fita sempre no mesmo lugar, de manhã, ajuda a comparar.</p>
+    <button class="btn full" style="margin-top:16px" data-a="saveMeasure" data-id="${id || ''}">Salvar</button>
+    ${x ? `<button class="btn danger full" style="margin-top:8px" data-a="delMeasure" data-id="${id}">Apagar</button>` : ''}`);
+}
+let profDraft = null;
+function openProfile(){
+  const p = S.profile; profDraft = {ativ:p.ativ, ritmo:p.ritmo};
+  openSheet('Meu perfil', `<div class="grid2"><div><label class="f" for="pfI">Idade</label><input class="in" id="pfI" inputmode="numeric" value="${p.idade || ''}"></div>
+    <div><label class="f" for="pfA">Altura (cm)</label><input class="in" id="pfA" inputmode="numeric" value="${p.altura || ''}"></div></div>
+    <p class="help">O peso vem da última medida em Corpo.</p>
+    <p class="f">Atividade</p><div class="opt" id="pfAtiv">${ATIV.map(a => `<button class="${p.ativ === a[0] ? 'on' : ''}" data-a="pfAtiv" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>
+    <p class="f">Objetivo</p><div class="opt" id="pfRitmo">${RITMO.map(a => `<button class="${p.ritmo === a[0] ? 'on' : ''}" data-a="pfRitmo" data-v="${a[0]}">${a[1]}<small>${a[2]}</small></button>`).join('')}</div>
+    <label class="f" for="pfK">Meta da nutricionista (kcal, opcional)</label><input class="in" id="pfK" inputmode="numeric" value="${p.kcalManual || ''}" placeholder="deixe vazio para calcular">
+    <button class="btn full" style="margin-top:16px" data-a="saveProfile">Salvar</button>`);
+}
+function openSettings(){
+  openSheet('Ajustes', `<label class="f" for="stN">Seu nome</label><input class="in" id="stN" value="${esc(S.name)}">
+    <label class="f" for="stA">Meta de copos de água por dia</label><input class="in" id="stA" inputmode="numeric" value="${S.agua}">
+    <button class="btn full" style="margin-top:12px" data-a="saveSettings">Salvar</button>
+    <h3 style="margin-top:22px">Backup</h3>
+    <p class="small muted">Seu progresso fica guardado no celular. Faça um backup de vez em quando e mande para o WhatsApp.${S.lastBackup ? ' Último: ' + fmtD(S.lastBackup) + '.' : ''}</p>
+    <div class="grid2" style="margin-top:8px"><button class="btn ghost" data-a="export">Salvar backup</button><button class="btn ghost" data-a="import">Restaurar</button></div>
+    <h3 style="margin-top:22px">Instalar no iPhone</h3>
+    <p class="small muted">No Safari: Compartilhar (quadrado com seta) > "Adicionar à Tela de Início". Instalado, ele abre como app e guarda melhor os dados.</p>
+    <h3 style="margin-top:22px">Zerar tudo</h3><button class="btn danger full" style="margin-top:8px" data-a="reset">Apagar todos os dados</button>`);
+}
+function openItems(){
+  openSheet('Itens do quarto', '<ul class="list">' + Object.keys(ITENS).map(id => { const it = ITENS[id], got = S.room.items[id];
+    return `<li><span class="grow"><b>${got ? esc(it.n) : '???'}</b><br><span class="small muted">${got ? 'ganho em ' + fmtD(got) : it.marco ? 'Conquista: ' + esc(it.marco) : it.loja ? 'Na loja: ' + it.loja + ' moedas' : it.cat ? 'Vem numa caixinha especial' : 'Vem numa caixinha'}</span></span>${got ? ic('check') : ''}</li>`; }).join('') + '</ul>');
+}
+function openCode(){
+  openSheet('Código do ' + esc(QUEM_DA_O_MIMO), `<p class="muted">Ganhou um código? Digite aqui para receber as moedas.</p>
+    <label class="f" for="cdIn">Código</label><input class="in" id="cdIn" autocapitalize="characters" autocomplete="off" placeholder="PASSO-XXXXX" style="text-transform:uppercase;letter-spacing:.08em;font-weight:800">
+    <button class="btn full" style="margin-top:14px" data-a="redeem">Resgatar</button>`);
+}
+
+/* guarda-roupa e loja */
+let wCat = 'top', tryOn = null;
+const WCATS = [['top','Blusas'],['bottom','Calças e saias'],['full','Vestidos'],['shoes','Sapatos'],['acc','Acessórios'],['quarto','Quarto'],['eu','Cabelo e pele']];
+function wearWith(w, id){
+  const r = roupa(id), x = JSON.parse(JSON.stringify(w));
+  if (r.parte === 'acc'){ x.acc[id] = !x.acc[id]; }
+  else if (r.parte === 'full'){ x.full = id; }
+  else { x[r.parte] = id; if (r.parte === 'top' || r.parte === 'bottom') x.full = null; }
+  return x;
+}
+function isWearing(id){ const r = roupa(id), w = S.wear; return r.parte === 'acc' ? !!w.acc[id] : r.parte === 'full' ? w.full === id : w.full && (r.parte === 'top' || r.parte === 'bottom') ? false : w[r.parte] === id; }
+function openWardrobe(){
+  let items = '';
+  if (wCat === 'eu') items = lookEditorHTML(S.look, 'w');
+  else if (wCat === 'quarto') items = `<div class="wardrobe-items">${LOJA_QUARTO.map(([id, n, p]) => { const got = S.room.items[id];
+      return `<button class="witem ${got ? 'on' : ''}" data-a="buyRoom" data-id="${id}" ${got ? 'disabled' : ''}><i style="background:${id === 'gato' ? '#E8A55A' : id === 'girassol' ? '#F4C430' : '#9FD3F0'}"></i><span><b>${esc(n)}</b><small>${got ? 'no seu quarto' : ic('coin') + ' ' + p}</small></span></button>`; }).join('')}</div>`;
+  else items = `<div class="wardrobe-items">${ROUPAS.filter(r => r[1] === wCat && (r[5] >= 0 || S.owned[r[0]])).map(r => { const id = r[0], own = !!S.owned[id], on = own && isWearing(id), tr = tryOn === id;
+      return `<button class="witem ${on ? 'on' : ''} ${tr ? 'try' : ''}" data-a="wItem" data-id="${id}" aria-pressed="${on}"><i style="background:${r[3]}"></i><span><b>${esc(r[4])}</b><small>${own ? (on ? (r[1] === 'acc' ? 'usando · tocar tira' : 'vestindo') : 'vestir') : ic('coin') + ' ' + r[5]}</small></span></button>`; }).join('')}</div>`;
+  const prevWear = tryOn ? wearWith(S.wear, tryOn) : S.wear;
+  const tr = tryOn && roupa(tryOn);
+  const buy = tr ? `<div class="buybar"><button class="btn sun full" data-a="buy" data-id="${tr.id}" ${S.coins < tr.preco ? 'disabled' : ''}>${S.coins < tr.preco ? 'Faltam ' + (tr.preco - S.coins) + ' moedas' : 'Comprar ' + esc(tr.n) + ' · ' + tr.preco}</button></div>` : '';
+  openSheet('Guarda-roupa', `<div class="avatar-big"><canvas id="wAv" aria-label="Prévia do boneco"></canvas></div>
+    <div class="row" style="justify-content:space-between"><span class="tag coin">${S.coins} moedas</span>${tr ? '<span class="small muted">provando</span>' : ''}</div>
+    <div class="chips scroll" style="margin-top:10px">${WCATS.map(c => `<button class="chip ${wCat === c[0] ? 'on' : ''}" data-a="wCat" data-c="${c[0]}">${c[1]}</button>`).join('')}</div>
+    ${items}${buy}`);
+  drawFull($('#wAv'), S.look, prevWear, 6);
+  const sh = $('#sheet'); sh.scrollTop = sh._st || 0;
+}
+
+/* ===================================================================== backup */
+function exportData(){
+  S.lastBackup = today(); save();
+  const txt = JSON.stringify(S), name = 'passinho-backup-' + today() + '.json', blob = new Blob([txt], {type:'application/json'});
+  try { const file = new File([blob], name, {type:'application/json'}); if (navigator.canShare && navigator.canShare({files:[file]})){ navigator.share({files:[file], title:'Backup do Passinho'}).catch(() => {}); return; } } catch(e){}
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+$('#fileIn').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !d.days || !d.v) throw 0; S = d; migrate(); rebuildFoods(); save(); closeSheet(); render(); toast('Backup restaurado'); } catch(err){ toast('Esse arquivo não é um backup do Passinho'); } e.target.value = ''; };
+  r.readAsText(f);
+});
+
+/* ===================================================================== feedback */
+let toastT;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2400); }
+function confetti(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cols = ['#F4D35E','#8B3A62','#4B4FA8','#2E7D4F','#E8A0A8'];
+  for (let i = 0; i < 24; i++){
+    const c = document.createElement('i'); c.className = 'confetti';
+    c.style.left = (window.innerWidth / 2) + 'px'; c.style.top = (window.innerHeight / 2) + 'px'; c.style.background = cols[i % cols.length];
+    c.style.setProperty('--dx', (Math.random() * 300 - 150) + 'px'); c.style.setProperty('--dy', (Math.random() * 300 - 200) + 'px');
+    document.body.appendChild(c); setTimeout(() => c.remove(), 1100);
+  }
+}
+
+/* ===================================================================== eventos */
+let resetArm = false, exT = 'caminhada', exM = 10;
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b || b.disabled) return;
+  const a = b.dataset.a, t = today();
+  switch (a){
+    // cadastro
+    case 'obNext': obRead();
+      if (ob.step === 0 && !ob.data.name){ toast('Escreva seu nome'); $('#obName').focus(); return; }
+      if (ob.step === 1){ const d = ob.data; if (!num(d.idade) || !num(d.altura) || !num(d.peso)){ toast('Preencha idade, altura e peso'); return; } if (num(d.altura) < 120 || num(d.altura) > 220){ toast('A altura é em centímetros, ex.: 160'); return; } }
+      ob.step++; render(); window.scrollTo(0, 0); break;
+    case 'obBack': obRead(); ob.step = Math.max(0, ob.step - 1); render(); break;
+    case 'obAtiv': obRead(); ob.data.ativ = Number(b.dataset.v); render(); break;
+    case 'obRitmo': obRead(); ob.data.ritmo = Number(b.dataset.v); render(); break;
+    case 'obFinish': obFinish(); break;
+    case 'look': {
+      const k = b.dataset.k, v = b.dataset.v;
+      if (b.dataset.ctx === 'ob'){ ob.data.look[k] = v; render(); }
+      else { S.look[k] = v; save(); $('#sheet')._st = $('#sheet').scrollTop; openWardrobe(); drawBust($('#bustT')); }
+      break; }
+    case 'wearNecklace': S.wear.acc.colar_ana = true; save(); closeSheet(); render(); toast('Ficou lindo!'); break;
+    // geral
+    case 'tab': tab = b.dataset.t; if (tab === 'comida') foodDay = today(); closeSheet(); render(); window.scrollTo(0, 0); break;
+    case 'settings': openSettings(); break;
+    case 'closeSheet': closeSheet(); if (tab === 'quarto') render(); break;
+    case 'toggle': {
+      const id = b.dataset.m, d = getDay(t, true);
+      if (id === 'sono_reg'){ if (!S.sleep[t]){ toast('Anote o sono no cartão de cima'); window.scrollTo({top:0, behavior:'smooth'}); } else toast('Já anotado. Para mudar, toque em editar.'); return; }
+      const was = isDone(t, id);
+      if (id === 'agua') d.agua = was ? Math.max(0, S.agua - 1) : S.agua;
+      else if (id === 'academia'){ d.gym = !d.gym; d.m.academia = d.gym; }
+      else if (was && !d.m[id]){ toast('Essa marcou sozinha pelo que você anotou'); return; }
+      else d.m[id] = !d.m[id];
+      afterChange(); if (!was) confetti();
+      break; }
+    case 'agua': { const k = b.dataset.k || t, d = getDay(k, true); d.agua = Math.max(0, (d.agua || 0) + Number(b.dataset.d)); afterChange(); break; }
+    case 'swap': openSwap(b.dataset.p); break;
+    case 'pick': S.pick[b.dataset.p] = b.dataset.m; save(); closeSheet(); render(); break;
+    case 'sleepQ': sleepQ = Number(b.dataset.q); b.parentElement.querySelectorAll('button').forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }); break;
+    case 'saveSleep': { const k = b.dataset.k, bt = $('#slB').value, wt = $('#slW').value, first = !S.sleep[k]; S.sleep[k] = {b:bt, w:wt, h:sleepHours(bt, wt), q:sleepQ}; closeSheet(); afterChange(); if (first && k === t) confetti(); else if (!first) toast('Sono salvo'); break; }
+    case 'editSleep': openSleep(b.dataset.k); break;
+    case 'delSleep': delete S.sleep[b.dataset.k]; closeSheet(); afterChange(); break;
+    case 'openBox': openBox(); break;
+    case 'reReveal': { const d = S.days[t]; if (d && d.box) showReveal(d.box); break; }
+    case 'goRoom': closeSheet(); tab = 'quarto'; render(); window.scrollTo(0, 0); break;
+    case 'mimo': openMimo(b.dataset.ym); break;
+    case 'mimoPick': S.mimos[b.dataset.ym].escolha = MIMOS[Number(b.dataset.i)]; save(); render(); openMimo(b.dataset.ym); break;
+    case 'mimoTroca': S.mimos[b.dataset.ym].escolha = null; save(); render(); openMimo(b.dataset.ym); break;
+    case 'mimoOk': S.mimos[b.dataset.ym].entregue = true; save(); render(); openMimo(b.dataset.ym); confetti(); break;
+    case 'coll': collTab = b.dataset.c; render(); break;
+    case 'itemsList': openItems(); break;
+    case 'code': openCode(); break;
+    case 'redeem': {
+      const raw = ($('#cdIn').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const h = String(hash('passinho:' + raw)), val = CODIGOS[h];
+      if (!raw){ toast('Digite o código'); return; }
+      if (!val){ toast('Código não encontrado. Confere as letras?'); return; }
+      if (S.codes[h]){ toast('Esse código já foi usado'); return; }
+      S.codes[h] = t; closeSheet(); earn('code:' + h, val, 'código do ' + QUEM_DA_O_MIMO); afterChange(); confetti(); break; }
+    // guarda-roupa
+    case 'wardrobe': tryOn = null; openWardrobe(); break;
+    case 'wCat': wCat = b.dataset.c; tryOn = null; $('#sheet')._st = 0; openWardrobe(); break;
+    case 'wItem': { const id = b.dataset.id; $('#sheet')._st = $('#sheet').scrollTop;
+      if (S.owned[id]){ S.wear = wearWith(S.wear, id); tryOn = null; save(); drawBust($('#bustT')); }
+      else tryOn = tryOn === id ? null : id;
+      openWardrobe(); break; }
+    case 'buy': { const r = roupa(b.dataset.id); if (!r || S.owned[r.id] || S.coins < r.preco) return; S.coins -= r.preco; S.owned[r.id] = 1; S.wear = wearWith(S.wear, r.id); tryOn = null; save(); openWardrobe(); drawBust($('#bustT')); confetti(); toast('Comprado e vestido!'); break; }
+    case 'buyRoom': { const it = LOJA_QUARTO.find(x => x[0] === b.dataset.id); if (!it || S.room.items[it[0]]) return; if (S.coins < it[2]){ toast('Faltam ' + (it[2] - S.coins) + ' moedas'); return; } S.coins -= it[2]; S.room.items[it[0]] = t; save(); openWardrobe(); confetti(); toast(it[1] + ' no seu quarto!'); break; }
+    // comida
+    case 'fday': { const k = addDays(foodDay || t, Number(b.dataset.d)); if (k > t) return; foodDay = k; render(); break; }
+    case 'addFood': openAddFood(b.dataset.k, b.dataset.s); break;
+    case 'pickFood': { const f = F[b.dataset.id]; addCtx.f = f.id; const pu = portionUnit(f); addCtx.u = pu || 'porção'; addCtx.q = 1; renderAddFood(); break; }
+    case 'fq': { const v = Math.max(0.5, (num($('#fq').value) || 0) + Number(b.dataset.d)); $('#fq').value = nf2.format(v); $('#fq').dispatchEvent(new Event('input')); break; }
+    case 'saveFood': saveFood(); break;
+    case 'adjUnit': addCtx.q = num($('#fq').value) || addCtx.q; openAdjUnit(); break;
+    case 'saveAdj': { const g = num($('#adjG').value); if (!g || g <= 0){ toast('Coloque os gramas'); return; } const f = F[addCtx.f];
+      if (f.custom){ const c = S.customFoods.find(x => x.id === f.id); c.uw = Object.assign({}, c.uw, {[addCtx.u]:g}); }
+      else { S.foodEdits[f.id] = S.foodEdits[f.id] || {uw:{}}; S.foodEdits[f.id].uw[addCtx.u] = g; }
+      rebuildFoods(); save(); renderAddFood(); toast('Medida ajustada'); break; }
+    case 'clearAdj': delete S.foodEdits[b.dataset.id]; rebuildFoods(); save(); openFoodLib(); break;
+    case 'delFood': { const d = S.days[b.dataset.k]; d.food = d.food.filter(x => x.id !== b.dataset.id); afterChange(); break; }
+    case 'foodLib': openFoodLib(); break;
+    case 'newFood': { const back = addCtx && $('#foodSearch') ? addCtx : null; newFoodBack = back; openNewFood(b.dataset.name || ''); break; }
+    case 'editCustom': newFoodBack = null; openNewFood('', b.dataset.id); break;
+    case 'saveNewFood': {
+      const n = $('#nfN').value.trim(), gr = num($('#nfP').value), k = num($('#nfK').value);
+      if (!n){ toast('Coloque o nome'); return; } if (!gr || gr <= 0){ toast('Coloque a porção em gramas'); return; } if (k == null || k < 0){ toast('Coloque as calorias'); return; }
+      const id = b.dataset.id || 'c_' + uid();
+      const data = {id, n, g:$('#nfG').value, gr, k, pr:num($('#nfPr').value) || 0, fb:num($('#nfFb').value) || 0, p:'porção de ' + nf2.format(gr) + ' g'};
+      const i = S.customFoods.findIndex(x => x.id === id);
+      if (i >= 0) S.customFoods[i] = Object.assign(S.customFoods[i], data); else S.customFoods.push(Object.assign({uw:{}}, data));
+      rebuildFoods(); save(); toast('Alimento salvo');
+      if (newFoodBack){ addCtx = newFoodBack; addCtx.f = id; addCtx.u = 'porção'; addCtx.q = 1; addCtx.search = n; newFoodBack = null; renderAddFood(); } else openFoodLib();
+      break; }
+    case 'delCustom': { const used = Object.values(S.days).some(d => (d.food || []).some(x => x.f === b.dataset.id)); if (used){ toast('Já foi usado. Edite em vez de excluir.'); return; } S.customFoods = S.customFoods.filter(f => f.id !== b.dataset.id); rebuildFoods(); save(); openFoodLib(); break; }
+    // treino
+    case 'addEx': exT = 'caminhada'; exM = 10; openAddEx(); break;
+    case 'exT': exT = b.dataset.t; $$('#exT .chip').forEach(x => x.classList.toggle('on', x === b)); break;
+    case 'exM': exM = Number(b.dataset.m); $$('#exM .chip').forEach(x => x.classList.toggle('on', x === b)); break;
+    case 'saveEx': { getDay(t, true).ex.push({t:exT, min:exM}); closeSheet(); if (!afterChange()) toast('Anotado'); break; }
+    case 'delEx': S.days[t].ex.splice(Number(b.dataset.i), 1); afterChange(); break;
+    case 'editFicha': openFicha(b.dataset.id); break;
+    case 'fichaAddEx': readFicha(); fichaDraft.ex.push({id:uid(), n:'', s:3, r:'12', c:null}); renderFicha(); break;
+    case 'fichaDelEx': readFicha(); fichaDraft.ex = fichaDraft.ex.filter(e => e.id !== b.dataset.id); renderFicha(); break;
+    case 'saveFicha': { readFicha(); const f = fichaDraft; delete f._existing; f.ex = f.ex.filter(e => e.n.trim()); const i = S.fichas.findIndex(x => x.id === f.id); if (i >= 0) S.fichas[i] = f; else S.fichas.push(f); save(); closeSheet(); render(); toast('Ficha salva'); break; }
+    case 'delFicha': S.fichas = S.fichas.filter(x => x.id !== fichaDraft.id); save(); closeSheet(); render(); break;
+    case 'startSession': openSession(b.dataset.id); break;
+    case 'sessDone': { readSession(); const e = sessDraft.ex[Number(b.dataset.i)]; e.done = !e.done; b.classList.toggle('on', e.done); b.setAttribute('aria-pressed', e.done); break; }
+    case 'finishSession': { readSession(); if (!sessDraft.ex.some(e => e.done)){ toast('Marque pelo menos um exercício'); return; }
+      S.sessions.push(sessDraft); const d = getDay(t, true); d.gym = true; d.m.academia = true;
+      const f = S.fichas.find(x => x.id === sessDraft.fid); if (f) sessDraft.ex.forEach(e => { const fe = f.ex.find(x => x.n === e.n); if (fe && e.done && e.c != null) fe.c = e.c; });
+      sessDraft = null; closeSheet(); confetti(); if (!afterChange()) toast('Treino salvo!'); break; }
+    // corpo
+    case 'metric': corpoMetric = b.dataset.m; render(); break;
+    case 'addMeasure': openMeasure(b.dataset.id); break;
+    case 'saveMeasure': { const id = b.dataset.id, x = id ? S.measures.find(m => m.id === id) : {id:uid()}; x.d = $('#mD').value || t; let any = false;
+      MEDIDAS.forEach(m => { const v = num($('#m_' + m[0]).value); x[m[0]] = v; if (v != null) any = true; });
+      if (!any){ toast('Preencha pelo menos uma medida'); return; }
+      if (!id) S.measures.push(x); save(); closeSheet(); render(); toast('Medidas salvas'); break; }
+    case 'delMeasure': S.measures = S.measures.filter(m => m.id !== b.dataset.id); save(); closeSheet(); render(); break;
+    case 'editProfile': openProfile(); break;
+    case 'pfAtiv': profDraft.ativ = Number(b.dataset.v); $$('#pfAtiv button').forEach(x => x.classList.toggle('on', x === b)); break;
+    case 'pfRitmo': profDraft.ritmo = Number(b.dataset.v); $$('#pfRitmo button').forEach(x => x.classList.toggle('on', x === b)); break;
+    case 'saveProfile': { const p = S.profile; p.idade = num($('#pfI').value) || p.idade; p.altura = num($('#pfA').value) || p.altura; p.ativ = profDraft.ativ; p.ritmo = profDraft.ritmo; p.kcalManual = num($('#pfK').value) || null; save(); closeSheet(); render(); toast('Perfil salvo'); break; }
+    // ajustes
+    case 'saveSettings': { const n = $('#stN').value.trim(), ag = parseInt($('#stA').value, 10); if (n) S.name = n; if (ag > 0 && ag < 30) S.agua = ag; closeSheet(); afterChange(); toast('Salvo'); break; }
+    case 'export': exportData(); break;
+    case 'import': $('#fileIn').click(); break;
+    case 'reset': if (!resetArm){ resetArm = true; b.textContent = 'Toque de novo para confirmar'; setTimeout(() => { resetArm = false; }, 4000); return; }
+      S = defaultState(); ob = {step:0, data:null}; rebuildFoods(); save(); closeSheet(); tab = 'hoje'; render(); break;
+  }
+});
+let newFoodBack = null;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); if (e.key === 'Enter' && e.target.id === 'obName'){ const b = document.querySelector('[data-a="obNext"]'); if (b) b.click(); } if (e.key === 'Enter' && e.target.id === 'cdIn'){ const b = document.querySelector('[data-a="redeem"]'); if (b) b.click(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S && S.onboarded){ settle(); save(); render(); flushCoins(); } });
+let resizeT; window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { const cv = $('#roomCv'); if (cv){ cv._k = 0; drawRoom(cv, frame); } }, 200); });
+
+/* ===================================================================== início */
+load(); rebuildFoods();
+if (S.onboarded){ settle(); pendingCoins.length = 0; save(); }
+if (!localStorage.getItem(KEY)) idbLoad().then(txt => { if (txt){ try { S = JSON.parse(txt); migrate(); rebuildFoods(); save(); render(); } catch(e){} } });
+render();
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('sw.js').catch(() => {});
+window.__passinho = {get S(){ return S; }, render, settle, afterChange, F:() => F, kcalOf, gramsPer, drawFull, drawNecklace};
+})();
+</script>
+</body>
+</html>
